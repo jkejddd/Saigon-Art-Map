@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Saigon Art Map</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Mozilla+Text:wght@200..700&family=Roboto+Flex:opsz,wdth,wght,GRAD@8..144,44,415,80&display=swap" rel="stylesheet">
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      scroll-behavior: smooth;
+      font-family: "Mozilla Text", system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      background-color: #FFFBF2;
+      color: #333;
+      overflow-x: hidden;
+    }
+
+    h1 {
+      font-family: "Roboto Flex", system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      font-optical-sizing: auto;
+      font-weight: 257;
+      font-style: normal;
+      font-variation-settings: "slnt" 0,"wdth" 44,"GRAD" 80,"wght" 415, "opsz" 144;
+      margin-bottom: 1em;
+      text-align: center;
+    }
+
+    .textp {
+      text-align: justify;
+    }
+
+    .contact {
+      display:block;
+      text-align: center;
+      margin: 0.5rem 0;
+      color: #333;
+    }
+
+    .texth1 {
+      font-weight: 257;
+      font-family: "Roboto Flex", system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      font-size: 6rem;
+      margin-bottom: 10px;
+    }
+
+    /* Hero */
+    .hero {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      text-align: center;
+      background-color: #FFFBF2;
+    }
+
+    .logo {
+      width: 50vw;
+      max-width: 500px;
+      height: auto;
+      animation: fadeIn 2.5s forwards ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(25px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      opacity: 0.7;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .scroll-hint.hidden {
+      opacity: 0;
+      transform: translateY(20px);
+      pointer-events: none;
+    }
+
+    .mouse {
+      width: 25px;
+      height: 40px;
+      border: 2px solid #333;
+      border-radius: 15px;
+      position: relative;
+    }
+
+    .mouse::before {
+      content: "";
+      position: absolute;
+      top: 8px;
+      left: 50%;
+      width: 4px;
+      height: 4px;
+      background: #333;
+      border-radius: 50%;
+      transform: translateX(-50%);
+      animation: scroll 1.5s infinite;
+    }
+
+    @keyframes scroll {
+      0% { opacity: 1; transform: translate(-50%, 0); }
+      100% { opacity: 0; transform: translate(-50%, 10px); }
+    }
+
+    /* Map */
+    .map-section {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      padding: 0.5rem;
+    }
+
+    .about-section {
+      width: 100%;
+      height: 50vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+    }
+
+    .footer-section {
+      width: 100%;
+      height: 50vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+    }
+
+    .about {
+      padding: 0 4rem;
+      width: 80%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    #map {
+      display: flex;
+      width: 90%;
+      max-width: 1200px;
+      height: 80%;
+      border: 2px solid #FFFBF2;
+    }
+
+    .map-section p {
+      text-align: center;
+      font-size: 1.2rem;
+    }
+
+  </style>
+</head>
+<body>
+
+  <section class="hero" id="hero">
+    <img src="logsam.svg" class="logo" alt="Saigon Art Map Logo"/>
+    <div class="scroll-hint" id="scrollHint">
+      <div class="mouse"></div>
+      <p>Scroll down</p>
+    </div>
+  </section>
+
+  <section class="map-section" id="map-section">
+    <h1 class="texth1">Our Map</h1>
+    <div id="map" width="100%"></div>
+  </section>
+
+  <section class="about-section" id="about">
+    <h1 class="texth1">About Saigon Art Map</h1>
+    <p class="textp about">Art is a way for humans to express their creativity, and for tens of thousands of millenia, art has evolved in unimaginable ways. Saigon Art Map is a collective map of all things art in Ho Chi Minh, wether it be Art Galleries, Art Shops, Museums, Venues, Halls or anything else, you name it. This project was started by Mai Do in 2014, and it continues to grow as a massive collection of art addresses. Soon enough, will be able to give out hard copies of the Saigon Art Map!</p>
+    <br>
+    <p class="textp about">Nghệ thuật cho thấy sự tiến hóa trong tư duy thẩm mỹ, sức sống với khát vọng tự do nội tâm của con người. Vậy làm thế nào để có được một hình dung khái lược, nhanh chóng  và thú vị về sức sống ấy ở một nơi chốn rộng lớn như Sài Gòn – Thành phố Hồ Chí Minh? Câu trả lời thú vị nhất chính là một bản đồ nghệ thuật thị giác của thành phố này. Một ngày gần đây nhất, hình ảnh và thông tin về nơi chốn của bạn sẽ hiện diện trên các phiên bản trực tuyến (online) và bản in (hard copy) của Saigon Art Map, cho thấy tình yêu nghệ thuật và sức sống tinh thần của riêng bạn, của cả thành phố này!  Đây là dự án mình đã khởi xướng từ 2014, qua nhiều thời gian nhiều thay đổi chúng mình muốn trở lại với các bạn. Cho mình phương án thực thi hiệu quả nhất.</p>
+  </section>
+
+  <section class="footer-section" id="footer">
+    <h1 class="texth1">Contact Info</h1>
+    <a class="contact" href="mailto:saigonartmap@gmail.com">Email: saigonartmap@gmail.com</a>
+    <a class="contact" href="https://www.facebook.com/artmap.saigon.10">Facebook: @artmap.saigon.10</a>
+    <a class="contact" href="https://www.facebook.com/saigonartmap">Facebook fanpage: @saigonartmap</a>
+  </section>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const map = L.map('map').setView([10.7769, 106.7009], 13);
+
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
+        subdomains: 'abcd',
+        maxZoom: 20
+      }).addTo(map);
+
+
+      // Example markers
+      fetch('https://raw.githubusercontent.com/jkejddd/Saigon-Art-Map/refs/heads/main/markers.json')
+        .then(res => res.json())
+        .then(data => {
+          data.forEach(marker => {
+            L.marker([marker.lat, marker.lng])
+              .addTo(map)
+              .bindPopup(`
+                <b>${marker.name}</b><br>
+                ${marker.description}<br>
+                ${marker.address || ''}<br>
+                ${marker.phone ? '📞 ' + marker.phone + '<br>' : ''}
+                ${marker.email ? '✉️ <a href="mailto:' + marker.email + '">' + marker.email + '</a><br>' : ''}
+                <br><a href="${marker.website}" target="_blank">Visit website</a>
+              `);
+          });
+        })
+        .catch(err => console.error('Error loading markers:', err));
+      });
+
+    // Scroll hint
+    const scrollHint = document.getElementById('scrollHint');
+    window.addEventListener('scroll', () => {
+      if(window.scrollY > window.innerHeight / 2) {
+        scrollHint.classList.add('hidden');
+      } else {
+        scrollHint.classList.remove('hidden');
+      }
+    });
+  </script>
+</body>
+</html>
