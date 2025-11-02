@@ -13,6 +13,7 @@
   <link rel="preload" as="image" href="https://cdn.jsdelivr.net/gh/jkejddd/Saigon-Art-Map/markers/museum.svg">
   <link rel="preload" as="image" href="https://cdn.jsdelivr.net/gh/jkejddd/Saigon-Art-Map/markers/studio.svg">
   <link rel="preload" as="image" href="https://cdn.jsdelivr.net/gh/jkejddd/Saigon-Art-Map/markers/other.svg">
+  <link rel="preload" as="image" href="logsam.svg" fetchpriority="high">
 
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-8FGQQPQZ3B"></script>
   <script>
@@ -122,7 +123,7 @@
 
     .scroll-hint.hidden {
       opacity: 0;
-      transform: translateY(20px);
+      transform: translateX(20px);
       pointer-events: none;
     }
 
@@ -207,19 +208,23 @@
   </style>
 </head>
 <body>
+  
+  <header>
+    <section class="hero" id="hero">
+      <img src="logsam.svg" class="logo" alt="Saigon Art Map Logo"/>
+      <div class="scroll-hint" id="scrollHint">
+        <div class="mouse"></div>
+        <p>Scroll down</p>
+      </div>
+    </section>
+  </header>
 
-  <section class="hero" id="hero">
-    <img src="logsam.svg" class="logo" alt="Saigon Art Map Logo"/>
-    <div class="scroll-hint" id="scrollHint">
-      <div class="mouse"></div>
-      <p>Scroll down</p>
-    </div>
-  </section>
-
-  <section class="map-section" id="map-section">
-    <h1 class="texth1">Our Map</h1>
-    <div id="map" width="100%"></div>
-  </section>
+  <main>
+    <section class="map-section" id="map-section">
+      <h1 class="texth1">Our Map</h1>
+      <div id="map" width="100%"></div>
+    </section>
+  </main>
 
   <section class="about-section" id="about">
     <h1 class="texth1">About Saigon Art Map</h1>
@@ -228,13 +233,15 @@
     <p class="textp about">Nghệ thuật cho thấy sự tiến hóa trong tư duy thẩm mỹ, sức sống với khát vọng tự do nội tâm của con người. Vậy làm thế nào để có được một hình dung khái lược, nhanh chóng  và thú vị về sức sống ấy ở một nơi chốn rộng lớn như Sài Gòn – Thành phố Hồ Chí Minh? Câu trả lời thú vị nhất chính là một bản đồ nghệ thuật thị giác của thành phố này. Một ngày gần đây nhất, hình ảnh và thông tin về nơi chốn của bạn sẽ hiện diện trên các phiên bản trực tuyến (online) và bản in (hard copy) của Saigon Art Map, cho thấy tình yêu nghệ thuật và sức sống tinh thần của riêng bạn, của cả thành phố này!  Đây là dự án mình đã khởi xướng từ 2014, qua nhiều thời gian nhiều thay đổi chúng mình muốn trở lại với các bạn. Cho mình phương án thực thi hiệu quả nhất.</p>
   </section>
 
-  <section class="footer-section" id="footer">
-    <h1 class="texth1">Contact Us</h1>
-    <a class="contact" href="mailto:saigonartmap@gmail.com">Email: saigonartmap@gmail.com</a>
-    <a class="contact" href="https://www.facebook.com/artmap.saigon.10">Facebook: @artmap.saigon.10</a>
-    <a class="contact" href="https://www.facebook.com/saigonartmap">Facebook fanpage: @saigonartmap</a>
-    <br><br><br><br><br>
-  </section>
+  <footer>
+    <section class="footer-section" id="footer">
+      <h1 class="texth1">Contact Us</h1>
+      <a class="contact" href="mailto:saigonartmap@gmail.com">Email: saigonartmap@gmail.com</a>
+      <a class="contact" href="https://www.facebook.com/artmap.saigon.10">Facebook: @artmap.saigon.10</a>
+      <a class="contact" href="https://www.facebook.com/saigonartmap">Facebook fanpage: @saigonartmap</a>
+      <br><br><br><br><br>
+    </section>
+  </footer>
 
   <script>
   document.addEventListener("DOMContentLoaded", () => {
@@ -322,7 +329,7 @@
         .catch(err => console.error("Error loading regional markers:", err));
     }
     
-    const base = "https://cdn.jsdelivr.net/gh/jkejddd/Saigon-Art-Map";
+    const base = "https://cdn.jsdelivr.net/gh/jkejddd/Saigon-Art-Map@latest";
 
     fetch(`${base}/hcmc.geojson`)
       .then(res => res.json())
