@@ -232,19 +232,19 @@
       {
         name: "Thủ Dầu Một",
         coords: [10.9804, 106.6519],
-        zoom: 13,
+        zoom: 11,
         file: "thudaumot.json"
       },
       {
         name: "Sài Gòn",
         coords: [10.7769, 106.7009],
-        zoom: 12,
+        zoom: 11,
         file: "saigon.json"
       },
       {
         name: "Vũng Tàu",
         coords: [10.4114, 107.1362],
-        zoom: 13,
+        zoom: 11,
         file: "vungtau.json"
       }
     ];
@@ -285,7 +285,10 @@
         .then(data => {
           placeMarkers.clearLayers();
           data.forEach(marker => {
-            L.marker([marker.lat, marker.lng])
+            const iconType = marker.type ? marker.type.toLowerCase() : 'default'; // get type from JSON
+            const markerIcon = icons[iconType] || icons.default;
+
+            L.marker([marker.lat, marker.lng], { icon: markerIcon })
               .addTo(placeMarkers)
               .bindPopup(`
                 <b>${marker.name}</b><br>
@@ -315,14 +318,42 @@
     .catch(err => console.error('Error loading HCMC boundary:', err));
 
     const cityLabel = L.marker([9.83210, 107.40025], {
-      icon: L.divIcon({
-        className: 'textp hcmctext',
-        html: '<span>Thành Phố Hồ Chí Minh</span>',
-        iconSize: [133, 20],
-        iconAnchor: [50, 10]
+          icon: L.divIcon({
+            className: 'textp hcmctext',
+            html: '<span>Thành Phố Hồ Chí Minh</span>',
+            iconSize: [133, 20],
+            iconAnchor: [50, 10]
+          }),
+          interactive: false
+        }).addTo(map);
+
+        const icons = {
+      gallery: L.icon({
+        iconUrl: 'https://raw.githubusercontent.com/jkejddd/Saigon-Art-Map/refs/heads/main/markers/gallery-marker.svg',
+        iconSize: [60, 60],
+        popupAnchor: [0, -40]
       }),
-      interactive: false
-    }).addTo(map);
+      cafe: L.icon({
+        iconUrl: 'icons/cafe.png',
+        iconSize: [60, 60],
+        popupAnchor: [0, -40]
+      }),
+      studio: L.icon({
+        iconUrl: 'icons/studio.png',
+        iconSize: [60, 60],
+        popupAnchor: [0, -40]
+      }),
+      museum: L.icon({
+        iconUrl: 'icons/museum.png',
+        iconSize: [60, 60],
+        popupAnchor: [0, -40]
+      }),
+      default: L.icon({
+        iconUrl: 'icons/default.png',
+        iconSize: [60, 60],
+        popupAnchor: [0, -40]
+      })
+    };
 
     function closeRegion() {
       placeMarkers.clearLayers();
