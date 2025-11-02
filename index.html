@@ -17,7 +17,7 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
   <style>
-    html, body {
+    html, body, .hcmctext {
       margin: 0;
       padding: 0;
       scroll-behavior: smooth;
@@ -243,7 +243,7 @@
         file: "thudaumot.json"
       },
       {
-        name: "Hồ Chí Minh City",
+        name: "Sài Gòn",
         coords: [10.7769, 106.7009],
         zoom: 12,
         file: "saigon.json"
@@ -317,13 +317,23 @@
     .then(data => {
       L.geoJSON(data, {
         style: {
-          color: 'red',
+          color: 'green',
           weight: 3,
-          fill: false
+          fill: true
         }
       }).addTo(map);
     })
     .catch(err => console.error('Error loading HCMC boundary:', err));
+
+    const cityLabel = L.marker([9.83210, 107.40025], {
+      icon: L.divIcon({
+        className: 'textp hcmctext',
+        html: '<span>Thành Phố Hồ Chí Minh</span>',
+        iconSize: [133, 20],
+        iconAnchor: [50, 10]
+      }),
+      interactive: false
+    }).addTo(map);
 
     // ⏪ Return to main view
     function closeRegion() {
