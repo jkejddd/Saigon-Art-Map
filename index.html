@@ -19,11 +19,12 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Mozilla+Text:wght@200..700&family=Roboto+Flex:opsz,slnt,wdth,wght,GRAD@8..144,-10..0,25..151,100..1000,-200..150&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=Mozilla+Text&family=Roboto+Flex:opsz,wdth,wght,GRAD@8..144,44,415,80&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script defer src="app.js"></script>
 
   <style>
     html, body, .hcmctext {
@@ -291,7 +292,7 @@
       backButtonEl.style.display = "block";
       map.setView(region.coords, region.zoom);
 
-      const url = `https://raw.githubusercontent.com/jkejddd/Saigon-Art-Map/refs/heads/main/${region.file}`;
+      const url = `https://cdn.jsdelivr.net/gh/jkejddd/Saigon-Art-Map@latest/${region.file}`;
       fetch(url)
         .then(res => res.json())
         .then(data => {
@@ -314,20 +315,24 @@
         })
         .catch(err => console.error("Error loading regional markers:", err));
     }
+    
+    const base = "https://cdn.jsdelivr.net/gh/jkejddd/Saigon-Art-Map";
 
-  const hcmcborder = `https://raw.githubusercontent.com/jkejddd/Saigon-Art-Map/main/hcmc.geojson`;
-  fetch(hcmcborder)
-    .then(res => res.json())
-    .then(data => {
-      L.geoJSON(data, {
-        style: {
-          color: 'green',
-          weight: 3,
-          fill: true
-        }
-      }).addTo(map);
-    })
-    .catch(err => console.error('Error loading HCMC boundary:', err));
+    fetch(`${base}/hcmc.geojson`)
+      .then(res => res.json())
+      .then(data => {
+        L.geoJSON(data, {
+          style: { color: "green", weight: 3, fill: true }
+        }).addTo(map);
+      });
+
+    const icons = {
+      gallery: L.icon({ iconUrl: `${base}/markers/gallery.svg`, iconSize: [50,50], popupAnchor: [0,-25] }),
+      cafe: L.icon({ iconUrl: `${base}/markers/cafe.svg`, iconSize: [50,50], popupAnchor: [0,-25] }),
+      museum: L.icon({ iconUrl: `${base}/markers/museum.svg`, iconSize: [50,50], popupAnchor: [0,-25] }),
+      studio: L.icon({ iconUrl: `${base}/markers/studio.svg`, iconSize: [50,50], popupAnchor: [0,-25] }),
+      other: L.icon({ iconUrl: `${base}/markers/other.svg`, iconSize: [50,50], popupAnchor: [0,-25] }),
+    };
 
     const cityLabel = L.marker([9.83210, 107.40025], {
           icon: L.divIcon({
@@ -338,34 +343,6 @@
           }),
           interactive: false
         }).addTo(map);
-
-        const icons = {
-      gallery: L.icon({
-        iconUrl: 'https://raw.githubusercontent.com/jkejddd/Saigon-Art-Map/main/markers/gallery.svg',
-        iconSize: [50, 50],
-        popupAnchor: [0, -25]
-      }),
-      cafe: L.icon({
-        iconUrl: 'https://raw.githubusercontent.com/jkejddd/Saigon-Art-Map/main/markers/cafe.svg',
-        iconSize: [50, 50],
-        popupAnchor: [0, -25]
-      }),
-      studio: L.icon({
-        iconUrl: 'https://raw.githubusercontent.com/jkejddd/Saigon-Art-Map/main/markers/studio.svg',
-        iconSize: [50, 50],
-        popupAnchor: [0, -25]
-      }),
-      museum: L.icon({
-        iconUrl: 'https://raw.githubusercontent.com/jkejddd/Saigon-Art-Map/main/markers/museum.svg',
-        iconSize: [50, 50],
-        popupAnchor: [0, -25]
-      }),
-      other: L.icon({
-        iconUrl: 'https://raw.githubusercontent.com/jkejddd/Saigon-Art-Map/main/markers/other.svg',
-        iconSize: [50, 50],
-        popupAnchor: [0, -25]
-      })
-    };
 
     function closeRegion() {
       placeMarkers.clearLayers();
