@@ -209,7 +209,7 @@
 
   <section class="about-section" id="about">
     <h1 class="texth1">About Saigon Art Map</h1>
-    <p class="textp about">Art is a way for humans to express their creativity, and for tens of thousands of millenia, art has evolved in unimaginable ways. Saigon Art Map is a collective map of all things art in Ho Chi Minh, wether it be Art Galleries, Art Shops, Museums, Venues, Halls or anything else, you name it. This project was started by Mai Do in 2014, and it continues to grow as a massive collection of art addresses. Soon enough, will be able to give out hard copies of the Saigon Art Map!</p>
+    <p class="textp about">Art is a way for humans to express their creativity, and for tens of thousands of millenia, art has evolved in unimaginable ways. Saigon Art Map is a collective map of all things art in Ho Chi Minh, wether it be Art Galleries, Art Shops, Museums, Venues, Halls or anything else, you name it. This project was started by Mai Do in 2014, and it continues to grow as a massive collection of art addresses. Mai imagines a day where Saigon Art Map is a massive online network, as well as physical hard copies, which can be used to explore the history and culture of this city.</p>
     <br>
     <p class="textp about">Nghệ thuật cho thấy sự tiến hóa trong tư duy thẩm mỹ, sức sống với khát vọng tự do nội tâm của con người. Vậy làm thế nào để có được một hình dung khái lược, nhanh chóng  và thú vị về sức sống ấy ở một nơi chốn rộng lớn như Sài Gòn – Thành phố Hồ Chí Minh? Câu trả lời thú vị nhất chính là một bản đồ nghệ thuật thị giác của thành phố này. Một ngày gần đây nhất, hình ảnh và thông tin về nơi chốn của bạn sẽ hiện diện trên các phiên bản trực tuyến (online) và bản in (hard copy) của Saigon Art Map, cho thấy tình yêu nghệ thuật và sức sống tinh thần của riêng bạn, của cả thành phố này!  Đây là dự án mình đã khởi xướng từ 2014, qua nhiều thời gian nhiều thay đổi chúng mình muốn trở lại với các bạn. Cho mình phương án thực thi hiệu quả nhất.</p>
   </section>
@@ -223,45 +223,121 @@
   </section>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const map = L.map('map').setView([10.7769, 106.7009], 13);
+  document.addEventListener("DOMContentLoaded", () => {
+    // 🗺️ Initialize base map
+    const map = L.map("map").setView([10.7769, 106.7009], 8);
 
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
-        subdomains: 'abcd',
-        maxZoom: 20
-      }).addTo(map);
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
+      subdomains: "abcd",
+      maxZoom: 20
+    }).addTo(map);
 
+    // 🔘 Define main region markers
+    const regions = [
+      {
+        name: "Thủ Dầu Một",
+        coords: [10.9804, 106.6519],
+        zoom: 13,
+        file: "thudaumot.json"
+      },
+      {
+        name: "Hồ Chí Minh City",
+        coords: [10.7769, 106.7009],
+        zoom: 12,
+        file: "saigon.json"
+      },
+      {
+        name: "Vũng Tàu",
+        coords: [10.4114, 107.1362],
+        zoom: 13,
+        file: "vungtau.json"
+      }
+    ];
 
-      // Example markers
-      fetch('https://raw.githubusercontent.com/jkejddd/Saigon-Art-Map/refs/heads/main/markers.json')
+    // 🧭 Layer groups
+    const regionMarkers = L.layerGroup().addTo(map);
+    const placeMarkers = L.layerGroup().addTo(map);
+
+    // 🏷️ Add persistent region markers with labels
+    regions.forEach(region => {
+      const m = L.marker(region.coords).addTo(regionMarkers);
+      m.bindTooltip(region.name, { permanent: true, direction: "top", offset: [0, -10] });
+      m.on("click", () => openRegion(region));
+    });
+
+    // 🔙 Back button
+    const backBtn = L.control({ position: "topright" });
+    backBtn.onAdd = function () {
+      const div = L.DomUtil.create("div", "leaflet-bar leaflet-control leaflet-control-custom");
+      div.innerHTML = "← Back";
+      div.style.cursor = "pointer";
+      div.style.background = "white";
+      div.style.padding = "6px 10px";
+      div.style.borderRadius = "4px";
+      div.style.fontWeight = "600";
+      div.style.display = "none"; // hidden initially
+      div.onclick = closeRegion;
+      return div;
+    };
+    backBtn.addTo(map);
+    const backButtonEl = document.querySelector(".leaflet-control-custom");
+
+    // 🎯 Open a region view
+    function openRegion(region) {
+      regionMarkers.clearLayers(); // hide city markers
+      backButtonEl.style.display = "block";
+      map.setView(region.coords, region.zoom);
+
+      const url = `https://raw.githubusercontent.com/jkejddd/Saigon-Art-Map/refs/heads/main/${region.file}`;
+      fetch(url)
         .then(res => res.json())
         .then(data => {
+          placeMarkers.clearLayers();
           data.forEach(marker => {
             L.marker([marker.lat, marker.lng])
-              .addTo(map)
+              .addTo(placeMarkers)
               .bindPopup(`
                 <b>${marker.name}</b><br>
-                ${marker.description}<br>
-                ${marker.address || ''}<br>
-                ${marker.phone ? '📞 ' + marker.phone + '<br>' : ''}
-                ${marker.email ? '✉️ <a href="mailto:' + marker.email + '">' + marker.email + '</a><br>' : ''}
-                <br><a href="${marker.website}" target="_blank">Visit website</a>
+                ${marker.description || ""}<br>
+                ${marker.address || ""}<br>
+                ${marker.phone ? "📞 " + marker.phone + "<br>" : ""}
+                ${marker.email ? '✉️ <a href="mailto:' + marker.email + '">' + marker.email + "</a><br>" : ""}
+                ${marker.website ? '<a href="' + marker.website + '" target="_blank">Visit website</a>' : ""}
               `);
           });
         })
-        .catch(err => console.error('Error loading markers:', err));
-      });
+        .catch(err => console.error("Error loading regional markers:", err));
+    }
 
-    // Scroll hint
-    const scrollHint = document.getElementById('scrollHint');
-    window.addEventListener('scroll', () => {
-      if(window.scrollY > window.innerHeight / 2) {
-        scrollHint.classList.add('hidden');
-      } else {
-        scrollHint.classList.remove('hidden');
-      }
-    });
+  const hcmcborder = `https://raw.githubusercontent.com/jkejddd/Saigon-Art-Map/main/hcmc.geojson`;
+  fetch(hcmcborder)
+    .then(res => res.json())
+    .then(data => {
+      L.geoJSON(data, {
+        style: {
+          color: 'red',
+          weight: 3,
+          fill: false
+        }
+      }).addTo(map);
+    })
+    .catch(err => console.error('Error loading HCMC boundary:', err));
+
+    // ⏪ Return to main view
+    function closeRegion() {
+      placeMarkers.clearLayers();
+      regionMarkers.clearLayers();
+      regions.forEach(region => {
+        const m = L.marker(region.coords).addTo(regionMarkers);
+        m.bindTooltip(region.name, { permanent: true, direction: "top", offset: [0, -10] });
+        m.on("click", () => openRegion(region));
+      });
+      backButtonEl.style.display = "none";
+      map.setView([10.7769, 106.7009], 8);
+    }
+  });
   </script>
 </body>
 </html>
