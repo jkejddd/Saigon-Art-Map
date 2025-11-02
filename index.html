@@ -8,6 +8,12 @@
   <meta name="keywords" content="Saigon, Sai gon, Ho Chi Minh City, HCMC, TP. HCM, TP HCM, Saigon Art Map, Sai gon Art Map, Art in HCMC, Art HCMC, Saigon Art, Sai gon Art, Saigon Map, Places in saigon, Art exhibits in HCMC">
   <meta name="author" content="Sai Gon Art Map">
   <link rel="canonical" href="https://saigonartmap.vn">
+  <link rel="preload" as="image" href="https://cdn.jsdelivr.net/gh/jkejddd/Saigon-Art-Map/markers/gallery.svg">
+  <link rel="preload" as="image" href="https://cdn.jsdelivr.net/gh/jkejddd/Saigon-Art-Map/markers/cafe.svg">
+  <link rel="preload" as="image" href="https://cdn.jsdelivr.net/gh/jkejddd/Saigon-Art-Map/markers/museum.svg">
+  <link rel="preload" as="image" href="https://cdn.jsdelivr.net/gh/jkejddd/Saigon-Art-Map/markers/studio.svg">
+  <link rel="preload" as="image" href="https://cdn.jsdelivr.net/gh/jkejddd/Saigon-Art-Map/markers/other.svg">
+
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-8FGQQPQZ3B"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -331,7 +337,7 @@
       cafe: L.icon({ iconUrl: `${base}/markers/cafe.svg`, iconSize: [50,50], popupAnchor: [0,-25] }),
       museum: L.icon({ iconUrl: `${base}/markers/museum.svg`, iconSize: [50,50], popupAnchor: [0,-25] }),
       studio: L.icon({ iconUrl: `${base}/markers/studio.svg`, iconSize: [50,50], popupAnchor: [0,-25] }),
-      other: L.icon({ iconUrl: `${base}/markers/other.svg`, iconSize: [50,50], popupAnchor: [0,-25] }),
+      default: L.icon({ iconUrl: `${base}/markers/other.svg`, iconSize: [50,50], popupAnchor: [0,-25] }),
     };
 
     const cityLabel = L.marker([9.83210, 107.40025], {
