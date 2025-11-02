@@ -15,8 +15,8 @@
   <link rel="preload" as="image" href="https://cdn.jsdelivr.net/gh/jkejddd/Saigon-Art-Map/markers/others.svg">
   <link rel="preload" as="image" href="logsam.svg" fetchpriority="high">
 
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-8FGQQPQZ3B"></script>
-  <script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-8FGQQPQZ3B" defer></script>
+  <script defer>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
@@ -26,9 +26,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=Mozilla+Text&family=Roboto+Flex:opsz,wdth,wght,GRAD@8..144,44,415,80&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=Mozilla+Text&family=Roboto+Flex:opsz,wdth,wght,GRAD@8..144,44,415,80&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="" defer></script>
 
@@ -217,6 +215,8 @@
       </div>
     </section>
   </header>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
 
   <main>
     <section class="map-section" id="map-section">
