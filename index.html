@@ -375,7 +375,10 @@
       const formData = new FormData(this);
 
       try {
-        const response = await fetch('https://corsproxy.io/?url=https://script.google.com/macros/s/AKfycbxeFiYlC9LBhhdmjz0ZEiZFnWZjqdWTD2Wf0nSuJw6FPhb7Niy3tIfOgU4X8DBrFS6ZTg/exec', {
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxeFiYlC9LBhhdmjz0ZEiZFnWZjqdWTD2Wf0nSuJw6FPhb7Niy3tIfOgU4X8DBrFS6ZTg/exec';
+        const proxyURL = `https://cors-proxy.qs5q9nxh8d.workers.dev/?url=${encodeURIComponent(scriptURL)}`;
+
+        const response = await fetch(proxyURL, {
           method: 'POST',
           body: formData
         });
