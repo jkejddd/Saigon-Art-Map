@@ -209,7 +209,7 @@
       font-size: 1.2rem;
     }
 
-    .form-section {
+    .form-section form {
       width: 100vw;
       height: auto;
       margin: 0 auto;
@@ -320,46 +320,48 @@
   </section>
 
   <section class="form-section" id="form">
+  <form id="artForm">
     <h1 class="texth1">Not on here? Fill this form!</h1>
     <p>It will take a few days to add your art site on the map!</p>
-    <div class="gname formdiv">
-      <label for="gname" class="texth2">Gallery Name:</label><br>
-      <input type="text" id="gname" name="gname" class="form" placeholder=" My Gallery">
-    </div>
-    <br>
-    <div class="address formdiv">
-      <label for="address" class="texth2">Address:</label><br>
-      <input type="text" id="address" name="address" class="form" placeholder=" 7 Công trường Lam Sơn, phường Sài Gòn, TP. HCM"><br><br>
-    </div>
-    <div class="govname formdiv">
-      <label for="govname" class="texth2">Full Name:</label><br>
-      <input type="text" id="govname" name="govname" class="form" placeholder=" John Smith"><br><br>
-    </div>
-    <div class="email formdiv">
-      <label for="email" class="texth2">Email Address:</label><br>
-      <input type="email" id="email" name="email" class="form" placeholder=" email@example.com"><br><br>
-    </div>
-    <div class="phonenum formdiv">
-      <label for="phonenum" class="texth2">Phone Number:</label><br>
-      <input type="tel" id="phonenum" name="phonenum" class="form" placeholder=" +84 1234567890"><br><br>
-    </div>
-    <div class="typeofplace formdiv">
-      <label for="typeofplace" class="texth2">Type:</label><br>
-      <select type="text" id="typeofplace" name="typeofplace" class="form">
-        <option value="gallery">Gallery</option>
-        <option value="cafe">Café</option>
-        <option value="museum">Museum</option>
-        <option value="studio">Studio</option>
-        <option value="other">Other</option>
-      </select>
-      <br><br>
-    </div>
-    <div class="details formdiv">
-      <label for="details" class="texth2">Additional Details:</label><br>
-      <input type="text" id="details" name="details" class="form" placeholder=" Please call first to book before visiting"><br><br>
-    </div>
-    <button type="submit" class="submit">Submit</button>
-    <br>
+      <div class="gname formdiv">
+        <label for="gname" class="texth2">Gallery Name:</label><br>
+        <input type="text" id="gname" name="gname" class="form" placeholder=" My Gallery">
+      </div>
+      <br>
+      <div class="address formdiv">
+        <label for="address" class="texth2">Address:</label><br>
+        <input type="text" id="address" name="address" class="form" placeholder=" 7 Công trường Lam Sơn, phường Sài Gòn, TP. HCM"><br><br>
+      </div>
+      <div class="govname formdiv">
+        <label for="govname" class="texth2">Full Name:</label><br>
+        <input type="text" id="govname" name="govname" class="form" placeholder=" John Smith"><br><br>
+      </div>
+      <div class="email formdiv">
+        <label for="email" class="texth2">Email Address:</label><br>
+        <input type="email" id="email" name="email" class="form" placeholder=" email@example.com"><br><br>
+      </div>
+      <div class="phonenum formdiv">
+        <label for="phonenum" class="texth2">Phone Number:</label><br>
+        <input type="tel" id="phonenum" name="phonenum" class="form" placeholder=" +84 1234567890"><br><br>
+      </div>
+      <div class="typeofplace formdiv">
+        <label for="typeofplace" class="texth2">Type:</label><br>
+        <select type="text" id="typeofplace" name="typeofplace" class="form">
+          <option value="gallery">Gallery</option>
+          <option value="cafe">Café</option>
+          <option value="museum">Museum</option>
+          <option value="studio">Studio</option>
+          <option value="other">Other</option>
+        </select>
+        <br><br>
+      </div>
+      <div class="details formdiv">
+        <label for="details" class="texth2">Additional Details:</label><br>
+        <input type="text" id="details" name="details" class="form" placeholder=" Please call first to book before visiting"><br><br>
+      </div>
+      <button type="submit" class="submit">Submit</button>
+      <br>
+    </form>
     <p id="form-status" class="status-message"></p>
         </section>
     <script>
@@ -464,7 +466,7 @@
       backButtonEl.style.display = "block";
       map.setView(region.coords, region.zoom);
 
-      const url = `https://purge.jsdelivr.net/gh/jkejddd/Saigon-Art-Map@latest/${region.file}`;
+      const url = `https://cdn.jsdelivr.net/gh/jkejddd/Saigon-Art-Map/${region.file}?v=${Date.now()}`;
       fetch(url)
         .then(res => res.json())
         .then(data => {
@@ -488,7 +490,7 @@
         .catch(err => console.error("Error loading regional markers:", err));
     }
     
-    const base = "https://cdn.jsdelivr.net/gh/jkejddd/Saigon-Art-Map@latest";
+    const base = "https://cdn.jsdelivr.net/gh/jkejddd/Saigon-Art-Map";
 
     fetch(`${base}/hcmc.geojson`)
       .then(res => res.json())
