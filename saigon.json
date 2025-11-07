@@ -10,4 +10,15 @@
     "website": "https://maisgallery.vn",
     "type": "gallery"
   }
+  {
+    "name": "Test",
+    "lat": 10.80648,
+    "lng": 106.72933,
+    "description": "Lorem ipsum dolor",
+    "phone": "(+84) 12345678",
+    "email": "email@example.com",
+    "address": "address123",
+    "website": "https://example.com/",
+    "type": "other"
+  }
 ]
