@@ -8,11 +8,11 @@
   <meta name="keywords" content="Saigon, Sai gon, Ho Chi Minh City, HCMC, TP. HCM, TP HCM, Saigon Art Map, Sai gon Art Map, Art in HCMC, Art HCMC, Saigon Art, Sai gon Art, Saigon Map, Places in saigon, Art exhibits in HCMC">
   <meta name="author" content="Sai Gon Art Map">
   <link rel="canonical" href="https://saigonartmap.vn">
-  <link rel="preload" as="image" href="https://cdn.jsdelivr.net/gh/jkejddd/Saigon-Art-Map/markers/galleries.svg">
-  <link rel="preload" as="image" href="https://cdn.jsdelivr.net/gh/jkejddd/Saigon-Art-Map/markers/cafes.svg">
-  <link rel="preload" as="image" href="https://cdn.jsdelivr.net/gh/jkejddd/Saigon-Art-Map/markers/museums.svg">
-  <link rel="preload" as="image" href="https://cdn.jsdelivr.net/gh/jkejddd/Saigon-Art-Map/markers/studios.svg">
-  <link rel="preload" as="image" href="https://cdn.jsdelivr.net/gh/jkejddd/Saigon-Art-Map/markers/others.svg">
+  <link rel="preload" as="image" href="/markers/galleries.svg">
+  <link rel="preload" as="image" href="/markers/cafes.svg">
+  <link rel="preload" as="image" href="/markers/museums.svg">
+  <link rel="preload" as="image" href="/markers/studios.svg">
+  <link rel="preload" as="image" href="/markers/others.svg">
   <link rel="preload" as="image" href="logsam.svg" fetchpriority="high">
 
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-8FGQQPQZ3B" defer></script>
@@ -470,8 +470,8 @@
       backButtonEl.style.display = "block";
       map.setView(region.coords, region.zoom);
 
-      const url = `https://cdn.jsdelivr.net/gh/jkejddd/Saigon-Art-Map/${region.file}?v=${Date.now()}`;
-      fetch(url)
+      const places = `${region.file}`;
+      fetch(places)
         .then(res => res.json())
         .then(data => {
           placeMarkers.clearLayers();
@@ -493,10 +493,8 @@
         })
         .catch(err => console.error("Error loading regional markers:", err));
     }
-    
-    const base = "https://cdn.jsdelivr.net/gh/jkejddd/Saigon-Art-Map";
 
-    fetch(`${base}/hcmc.geojson`)
+    fetch(`hcmc.geojson`)
       .then(res => res.json())
       .then(data => {
         L.geoJSON(data, {
@@ -505,11 +503,11 @@
       });
 
     const icons = {
-      gallery: L.icon({ iconUrl: `${base}/markers/galleries.svg`, iconSize: [40,40], popupAnchor: [0,-25] }),
-      cafe: L.icon({ iconUrl: `${base}/markers/cafes.svg`, iconSize: [40,40], popupAnchor: [0,-25] }),
-      museum: L.icon({ iconUrl: `${base}/markers/museums.svg`, iconSize: [40,40], popupAnchor: [0,-25] }),
-      studio: L.icon({ iconUrl: `${base}/markers/studios.svg`, iconSize: [40,40], popupAnchor: [0,-25] }),
-      default: L.icon({ iconUrl: `${base}/markers/others.svg`, iconSize: [40,40], popupAnchor: [0,-25] }),
+      gallery: L.icon({ iconUrl: `/markers/galleries.svg`, iconSize: [40,40], popupAnchor: [0,-25] }),
+      cafe: L.icon({ iconUrl: `/markers/cafes.svg`, iconSize: [40,40], popupAnchor: [0,-25] }),
+      museum: L.icon({ iconUrl: `/markers/museums.svg`, iconSize: [40,40], popupAnchor: [0,-25] }),
+      studio: L.icon({ iconUrl: `/markers/studios.svg`, iconSize: [40,40], popupAnchor: [0,-25] }),
+      default: L.icon({ iconUrl: `/markers/others.svg`, iconSize: [40,40], popupAnchor: [0,-25] }),
     };
 
     const cityLabel = L.marker([9.83210, 107.40025], {
