@@ -9,16 +9,5 @@
     "address": "Suite PH 1803, Cantavil Hoan Cau 600A Dien Bien Phu, Phường Thạnh Mỹ Tây, TP. HCM",
     "website": "https://maisgallery.vn",
     "type": "gallery"
-  },
-  {
-    "name": "Test",
-    "lat": 10.80648,
-    "lng": 106.72933,
-    "description": "Lorem ipsum dolor",
-    "phone": "(+84) 12345678",
-    "email": "email@example.com",
-    "address": "address123",
-    "website": "https://example.com/",
-    "type": "other"
   }
 ]
