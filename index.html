@@ -428,15 +428,17 @@
         <br><br><br><br>
     </footer>
     
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" media="print" onload="this.media='all'"/>
+    <link rel="preload" href="https://unpkg.com/leaflet/dist/leaflet.css" onload="this.media='all'"/>
+    <noscript><link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"></noscript>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js" defer></script>
     
-    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" media="print" onload="this.media='all'"/>
+    <link rel="preload" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" onload="this.media='all'"/>
+    <noscript><link rel="stylesheet" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css"></noscript>
     <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js" defer></script>
     
     <script src="https://unpkg.com/@maplibre/maplibre-gl-leaflet/leaflet-maplibre-gl.js" defer></script>
     
-    <script defer>
+    <script>
       document.addEventListener("DOMContentLoaded", () => {
         const map = L.map("map").setView([10.7769, 106.7009], 8);
         
