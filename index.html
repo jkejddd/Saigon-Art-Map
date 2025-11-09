@@ -400,36 +400,38 @@
     <p id="form-status" class="status-message"></p>
         </section>
     <script>
-    document.getElementById('artForm').addEventListener('submit', async function (e) {
-      e.preventDefault();
-
-      const status = document.getElementById('form-status');
-      status.textContent = 'Submitting...';
-      status.className = 'status-message show';
-
-      const formData = new FormData(this);
-
-      try {
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbxu-j5xqPR1-gwl1j0V9sGNczPtlMGfjWVVqcNtvBtRLzE2HwQLpcw9N3XMQQeimqgn9g/exec';
-        const proxyURL = `https://cors-proxy.qs5q9nxh8d.workers.dev/?url=${encodeURIComponent(scriptURL)}`;
-
-        const response = await fetch(proxyURL, {
-          method: 'POST',
-          body: formData
+      document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById('artForm').addEventListener('submit', async function (e) {
+          e.preventDefault();
+    
+          const status = document.getElementById('form-status');
+          status.textContent = 'Submitting...';
+          status.className = 'status-message show';
+    
+          const formData = new FormData(this);
+    
+          try {
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbxu-j5xqPR1-gwl1j0V9sGNczPtlMGfjWVVqcNtvBtRLzE2HwQLpcw9N3XMQQeimqgn9g/exec';
+            const proxyURL = `https://cors-proxy.qs5q9nxh8d.workers.dev/?url=${encodeURIComponent(scriptURL)}`;
+    
+            const response = await fetch(proxyURL, {
+              method: 'POST',
+              body: formData
+            });
+    
+            if (response.ok) {
+              status.textContent = '✅ Submitted successfully!';
+              status.classList.add('success');
+              this.reset();
+            } else {
+              throw new Error('Server error');
+            }
+          } catch (error) {
+            status.textContent = '❌ Something went wrong. Try again.';
+            status.classList.add('error');
+          }
         });
-
-        if (response.ok) {
-          status.textContent = '✅ Submitted successfully!';
-          status.classList.add('success');
-          this.reset();
-        } else {
-          throw new Error('Server error');
-        }
-      } catch (error) {
-        status.textContent = '❌ Something went wrong. Try again.';
-        status.classList.add('error');
-      }
-    });
+      });
     </script>
   </section>
 
