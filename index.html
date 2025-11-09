@@ -327,6 +327,7 @@
   </header>
 
   <main>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
     <section class="map-section" id="map-section">
       <h2 class="texth1">Our Map</h2>
       <div id="map" width="100%"></div>
@@ -434,9 +435,7 @@
       <a class="contact" href="https://www.facebook.com/saigonartmap">Facebook fanpage: @saigonartmap</a>
       <br><br><br><br>
   </footer>
-
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
-
+  
   <script>
   document.addEventListener("DOMContentLoaded", () => {
     const map = L.map("map").setView([10.7769, 106.7009], 8);
@@ -492,6 +491,14 @@
     backBtn.addTo(map);
     const backButtonEl = document.querySelector(".leaflet-control-custom");
 
+    const icons = {
+      gallery: L.icon({ iconUrl: `markers/galleries.svg`, iconSize: [40,40], popupAnchor: [0,-25] }),
+      cafe: L.icon({ iconUrl: `markers/cafes.svg`, iconSize: [40,40], popupAnchor: [0,-25] }),
+      museum: L.icon({ iconUrl: `markers/museums.svg`, iconSize: [40,40], popupAnchor: [0,-25] }),
+      studio: L.icon({ iconUrl: `markers/studios.svg`, iconSize: [40,40], popupAnchor: [0,-25] }),
+      default: L.icon({ iconUrl: `markers/others.svg`, iconSize: [40,40], popupAnchor: [0,-25] }),
+    };
+
     function openRegion(region) {
       regionMarkers.clearLayers();
       backButtonEl.style.display = "block";
@@ -528,14 +535,6 @@
           style: { color: "green", weight: 3, fill: true }
         }).addTo(map);
       });
-
-    const icons = {
-      gallery: L.icon({ iconUrl: `markers/galleries.svg`, iconSize: [40,40], popupAnchor: [0,-25] }),
-      cafe: L.icon({ iconUrl: `markers/cafes.svg`, iconSize: [40,40], popupAnchor: [0,-25] }),
-      museum: L.icon({ iconUrl: `markers/museums.svg`, iconSize: [40,40], popupAnchor: [0,-25] }),
-      studio: L.icon({ iconUrl: `markers/studios.svg`, iconSize: [40,40], popupAnchor: [0,-25] }),
-      default: L.icon({ iconUrl: `markers/others.svg`, iconSize: [40,40], popupAnchor: [0,-25] }),
-    };
 
     const cityLabel = L.marker([9.83210, 107.40025], {
           icon: L.divIcon({
