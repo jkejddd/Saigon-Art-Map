@@ -21,13 +21,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=Mozilla+Text&family=Roboto+Flex:opsz,wdth,wght,GRAD@8..144,44,415,80&display=swap" rel="stylesheet" media="print" onload="this.media='all'">  
-    
-    <link rel="preconnect" href="https://basemaps.cartocdn.com" crossorigin>
-    <link rel="preconnect" href="https://cartocdn.com" crossorigin>
-    
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"></noscript>  
-    
     <style>
       html, body, .hcmctext {
         margin: 0;
@@ -435,34 +428,27 @@
         <br><br><br><br>
     </footer>
     
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
-    <script src="https://unpkg.com/leaflet.vectorgrid/dist/Leaflet.VectorGrid.bundled.js" defer></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js" defer></script>
+    
+    <link href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js" defer></script>
+    
+    <script src="https://unpkg.com/@maplibre/maplibre-gl-leaflet/leaflet-maplibre-gl.js" defer></script>
     
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         const map = L.map("map").setView([10.7769, 106.7009], 12);
+        
+        L.maplibreGL({
+          style: 'https://tiles.openfreemap.org/styles/liberty',
+        }).addTo(map);
       
-        // Vector Tiles from OpenFreeMap
-        const vectorTileLayer = L.vectorGrid.protobuf(
-          "https://tiles.openfreemap.org/vector/{z}/{x}/{y}.pbf",
-          {
-            vectorTileLayerStyles: {
-              water: { fill: true, weight: 0, fillColor: "#aadaff", fillOpacity: 0.6 },
-              landuse: { fill: true, weight: 0, fillColor: "#f8f8f8", fillOpacity: 0.5 },
-              roads: { weight: 1, color: "#888", fill: false },
-              buildings: { fill: true, fillColor: "#d0d0d0", stroke: true, color: "#999", weight: 1 }
-            },
-            interactive: false,
-            maxZoom: 20
-          }
-        ).addTo(map);
-      
-        // Green fill and borders from HCMC geojson
         fetch(`hcmc.geojson`)
           .then(res => res.json())
           .then(data => {
             L.geoJSON(data, {
-              style: { color: "green", weight: 3, fill: true, fillOpacity: 0.1 }
+              style: {color: "green", weight: 3, fill: true, fillOpacity: 0.1}
             }).addTo(map);
           });
       
@@ -483,7 +469,6 @@
           default: L.icon({ iconUrl: 'markers/others.svg', iconSize: [40,40], popupAnchor: [0,-25] })
         };
       
-        // Create region markers
         function renderRegionMarkers() {
           regionMarkers.clearLayers();
           regions.forEach(region => {
@@ -495,7 +480,6 @@
       
         renderRegionMarkers();
       
-        // Back button
         const backBtn = L.control({ position: "topright" });
         backBtn.onAdd = function () {
           const div = L.DomUtil.create("div", "leaflet-bar leaflet-control leaflet-control-custom");
@@ -512,7 +496,6 @@
         backBtn.addTo(map);
         const backButtonEl = document.querySelector(".leaflet-control-custom");
       
-        // Open region: load markers from JSON file
         function openRegion(region) {
           regionMarkers.clearLayers();
           backButtonEl.style.display = "block";
@@ -541,14 +524,12 @@
             .catch(err => console.error("Error loading regional markers:", err));
         }
       
-        // Close region and return to overview
         function closeRegion() {
           placeMarkers.clearLayers();
           renderRegionMarkers();
           backButtonEl.style.display = "none";
           map.setView([10.7769, 106.7009], 12);
         }
-      
       });
     </script>
   </body>
