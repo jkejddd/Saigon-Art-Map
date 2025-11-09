@@ -95,6 +95,6 @@
       "type": "Feature",
       "geometry": { "type": "Point", "coordinates": [106.71714, 10.79902] },
       "properties": {"name": "Mai's Gallery", "description": "A private gallery owned by Mai Do. Please book first before coming.", "phone": "(+84) 0903813908", "email": "maisgallery@gmail.com", "address": "600A Điện Biên Phủ, Phường Thạnh Mỹ Tây, TP. HCM", "website": "https://maisgallery.vn/", "type": "gallery"}
-    },
+    }
   ]
 }
