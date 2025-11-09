@@ -438,7 +438,7 @@
     
     <script>
       document.addEventListener("DOMContentLoaded", () => {
-        const map = L.map("map").setView([10.7769, 106.7009], 12);
+        const map = L.map("map").setView([10.7769, 106.7009], 8);
         
         L.maplibreGL({
           style: 'https://tiles.openfreemap.org/styles/liberty',
@@ -528,7 +528,7 @@
           placeMarkers.clearLayers();
           renderRegionMarkers();
           backButtonEl.style.display = "none";
-          map.setView([10.7769, 106.7009], 12);
+          map.setView([10.7769, 106.7009], 8);
         }
       });
     </script>
