@@ -1,0 +1,18 @@
+/*   # All HTML pages
+  Cache-Control: public, max-age=0, must-revalidate
+
+/*.json
+  Cache-Control: public, max-age=0, must-revalidate
+
+/*.geojson
+/*.woff2
+/*.woff
+/*.ttf
+/*.css
+/*.js
+/*.svg
+/*.png
+/*.jpg
+/*.jpeg
+/*.webp
+  Cache-Control: public, max-age=31536000, immutable
