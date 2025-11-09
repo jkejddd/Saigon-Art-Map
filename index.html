@@ -510,7 +510,7 @@
             .then(data => {
               placeMarkers.clearLayers();
               
-              const templayer = L.geoJSON(data, {
+              const tempLayer = L.geoJSON(data, {
                 pointToLayer: function(feature, latlng) {
                   const iconType = feature.properties.type ? feature.properties.type.toLowerCase() : 'default';
                   const markerIcon = icons[iconType] || icons.default;
