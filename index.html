@@ -327,14 +327,6 @@
   </header>
 
   <main>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
-    <script>
-      L.Icon.Default.mergeOptions({
-        iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-        iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-        shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png"
-      });
-    </script>
     <section class="map-section" id="map-section">
       <h2 class="texth1">Our Map</h2>
       <div id="map" width="100%"></div>
@@ -443,8 +435,16 @@
       <br><br><br><br>
   </footer>
   
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+  
   <script>
     document.addEventListener("DOMContentLoaded", () => {
+       L.Icon.Default.mergeOptions({
+         iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+         iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+         shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png"
+       });
+      
       const map = L.map("map").setView([10.7769, 106.7009], 8);
         L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
           attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
