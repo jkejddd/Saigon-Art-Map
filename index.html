@@ -526,9 +526,9 @@
                   popupHtml += props.website ? '<a href="' + props.website + '" target="_blank">Visit website</a>' : "";
                   layer.bindPopup(popupHtml);
                 }
-              });
+              })
               tempLayer.addTo(placeMarkers);
-            });
+            })
             .catch(err => console.error("Error loading regional markers:", err));
         }
       
