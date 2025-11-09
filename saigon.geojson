@@ -43,7 +43,7 @@
     },
     {
       "type": "Feature",
-      "geometry": { "type": "Point", "coordinates": [106.71714, 10.79902] },
+      "geometry": { "type": "Point", "coordinates": [106.70714, 10.77523] },
       "properties": {"name": "Saigon River Sightseeing", "description": "Waterbus - enjoy music and theatrical performances on the Saigon River. Tàu du lịch - thưởng thức âm nhạc, nghệ thuật hóa trang trên sông Sài Gòn.", "phone": "(+84) 031 539 0995", "email": "booking@saigonwatergo.com", "address": "Bến tàu Bạch Đằng – Saigon WaterGo 10B Tôn Đức Thắng, Phường Sài Gòn, TP. HCM.", "website": "https://saigonriversightseeing.com/chi-tiet-tour/tour-saigon-river-sightseeing", "type": "other"}
     }
   ]
