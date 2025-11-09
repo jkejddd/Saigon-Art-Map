@@ -432,9 +432,10 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     
-    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" />
-    <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js" defer></script>
+    <link rel="preload" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://unpkg.com/maplibre-gl/dist/maplibre-gl.css"></noscript>
     
+    <script src="https://unpkg.com/maplibre-gl/dist/maplibre-gl.js" defer></script>
     <script src="https://unpkg.com/@maplibre/maplibre-gl-leaflet/leaflet-maplibre-gl.js" defer></script>
     
     <script>
