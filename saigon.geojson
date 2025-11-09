@@ -4,7 +4,97 @@
     {
       "type": "Feature",
       "geometry": { "type": "Point", "coordinates": [106.71714, 10.79902] },
+      "properties": {"name": "Mai's Gallery", "description": "The gallery is located on the penthouse floor of the Cantavil building, offering a luxurious and private space. The gallery does not follow current trends but has its own distinct identity. It caters to a discerning audience of professionals and is not aimed at the general public. Please book first before visiting. Gallery tọa lạc tại tầng penthouse của tòa Cantavil, không gian sang trọng và riêng tư. Gallery không chạy theo xu hướng hiện nay mà theo một bản sắc riêng, Gallery hướng đến nhóm chiêm nghiệm là giới chuyên môn và không mang tính đại chúng. Vui lòng đặt chỗ trước khi đến thăm.", "phone": "(+84) 090 381 39 08", "email": "maisgallery@gmail.com", "address": "600A Điện Biên Phủ, Phường Thạnh Mỹ Tây, TP. HCM", "website": "https://maisgallery.vn/", "type": "gallery"}
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.69095, 10.75911] },
+      "properties": {"name": "TDX Ice Factory", "description": "Converted from an old ice factory, it has become a complex comprising a showroom, offices and event space dedicated to art, design, architecture and creativity. Được cải tạo từ một nhà máy nước đá cũ, trở thành tổ hợp Showroom, văn phòng và không gian tổ chức sự kiện liên quan đến nghệ thuật, thiết kế, kiến trúc và sáng tạo.", "phone": "(+84) 093 635 48 46", "email": "info@districteight.com", "address": "19/45 Trần Ðình Xu, Phường Cầu Ông Lãnh, TP. HCM", "website": "https://districteight.com/", "type": "studio"}
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.69954, 10.77611] },
+      "properties": {"name": "Bảo tàng Thành phố Hồ Chí Minh, Museum of Ho Chi Minh City", "description": "One of the city's major museums. The museum is an architectural masterpiece steeped in classic French style with exquisite sculptural details, making it ideal for research activities (history, culture, religion, etc.). Một trong những bảo tàng lớn của thành phố. Bảo tàng là một công trình kiến trúc nghệ thuật mang đậm phong cách Pháp cổ kính với chi tiết điêu khắc tinh xảo, bảo tàng thích hợp cho hoạt động nghiên cứu (lịch sử, văn hóa, tín ngưỡng,...)", "phone": "(+84)  0283 829 97 41", "email": "baotangtphcm@gmail.com", "address": "65 Lý Tự Trọng, Phường Sài Gòn, TP. HCM", "website": "https://hcmc-museum.edu.vn/", "type": "museum"}
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.71714, 10.79902] },
+      "properties": {"name": "Galerie Quynh", "description": "Galerie Quynh is a well-known commercial gallery specialising in contemporary art. The gallery has 20 years of experience in exhibiting and developing contemporary art in Vietnam. Galerie Quynh là một phòng tranh thương mại về nghệ thuật đương đại khá nổi tiếng. Phòng tranh đã có thâm niên 20 năm hoạt động trong lĩnh vực trưng bày, phát triển nền nghệ thuật đương đại tại Việt Nam.", "phone": "(+84) 0283 822 72 18", "email": "info@galeriequynh.com", "address": "118 Nguyễn Văn Thủ, Phường Tân Định, TP. HCM", "website": "https://www.galeriequynh.com/", "type": "gallery"}
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.71714, 10.79902] },
       "properties": {"name": "Mai's Gallery", "description": "A private gallery owned by Mai Do. Please book first before coming.", "phone": "(+84) 0903813908", "email": "maisgallery@gmail.com", "address": "600A Điện Biên Phủ, Phường Thạnh Mỹ Tây, TP. HCM", "website": "https://maisgallery.vn/", "type": "gallery"}
-    }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.71714, 10.79902] },
+      "properties": {"name": "Mai's Gallery", "description": "A private gallery owned by Mai Do. Please book first before coming.", "phone": "(+84) 0903813908", "email": "maisgallery@gmail.com", "address": "600A Điện Biên Phủ, Phường Thạnh Mỹ Tây, TP. HCM", "website": "https://maisgallery.vn/", "type": "gallery"}
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.71714, 10.79902] },
+      "properties": {"name": "Mai's Gallery", "description": "A private gallery owned by Mai Do. Please book first before coming.", "phone": "(+84) 0903813908", "email": "maisgallery@gmail.com", "address": "600A Điện Biên Phủ, Phường Thạnh Mỹ Tây, TP. HCM", "website": "https://maisgallery.vn/", "type": "gallery"}
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.71714, 10.79902] },
+      "properties": {"name": "Mai's Gallery", "description": "A private gallery owned by Mai Do. Please book first before coming.", "phone": "(+84) 0903813908", "email": "maisgallery@gmail.com", "address": "600A Điện Biên Phủ, Phường Thạnh Mỹ Tây, TP. HCM", "website": "https://maisgallery.vn/", "type": "gallery"}
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.71714, 10.79902] },
+      "properties": {"name": "Mai's Gallery", "description": "A private gallery owned by Mai Do. Please book first before coming.", "phone": "(+84) 0903813908", "email": "maisgallery@gmail.com", "address": "600A Điện Biên Phủ, Phường Thạnh Mỹ Tây, TP. HCM", "website": "https://maisgallery.vn/", "type": "gallery"}
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.71714, 10.79902] },
+      "properties": {"name": "Mai's Gallery", "description": "A private gallery owned by Mai Do. Please book first before coming.", "phone": "(+84) 0903813908", "email": "maisgallery@gmail.com", "address": "600A Điện Biên Phủ, Phường Thạnh Mỹ Tây, TP. HCM", "website": "https://maisgallery.vn/", "type": "gallery"}
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.71714, 10.79902] },
+      "properties": {"name": "Mai's Gallery", "description": "A private gallery owned by Mai Do. Please book first before coming.", "phone": "(+84) 0903813908", "email": "maisgallery@gmail.com", "address": "600A Điện Biên Phủ, Phường Thạnh Mỹ Tây, TP. HCM", "website": "https://maisgallery.vn/", "type": "gallery"}
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.71714, 10.79902] },
+      "properties": {"name": "Mai's Gallery", "description": "A private gallery owned by Mai Do. Please book first before coming.", "phone": "(+84) 0903813908", "email": "maisgallery@gmail.com", "address": "600A Điện Biên Phủ, Phường Thạnh Mỹ Tây, TP. HCM", "website": "https://maisgallery.vn/", "type": "gallery"}
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.71714, 10.79902] },
+      "properties": {"name": "Mai's Gallery", "description": "A private gallery owned by Mai Do. Please book first before coming.", "phone": "(+84) 0903813908", "email": "maisgallery@gmail.com", "address": "600A Điện Biên Phủ, Phường Thạnh Mỹ Tây, TP. HCM", "website": "https://maisgallery.vn/", "type": "gallery"}
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.71714, 10.79902] },
+      "properties": {"name": "Mai's Gallery", "description": "A private gallery owned by Mai Do. Please book first before coming.", "phone": "(+84) 0903813908", "email": "maisgallery@gmail.com", "address": "600A Điện Biên Phủ, Phường Thạnh Mỹ Tây, TP. HCM", "website": "https://maisgallery.vn/", "type": "gallery"}
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.71714, 10.79902] },
+      "properties": {"name": "Mai's Gallery", "description": "A private gallery owned by Mai Do. Please book first before coming.", "phone": "(+84) 0903813908", "email": "maisgallery@gmail.com", "address": "600A Điện Biên Phủ, Phường Thạnh Mỹ Tây, TP. HCM", "website": "https://maisgallery.vn/", "type": "gallery"}
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.71714, 10.79902] },
+      "properties": {"name": "Mai's Gallery", "description": "A private gallery owned by Mai Do. Please book first before coming.", "phone": "(+84) 0903813908", "email": "maisgallery@gmail.com", "address": "600A Điện Biên Phủ, Phường Thạnh Mỹ Tây, TP. HCM", "website": "https://maisgallery.vn/", "type": "gallery"}
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.71714, 10.79902] },
+      "properties": {"name": "Mai's Gallery", "description": "A private gallery owned by Mai Do. Please book first before coming.", "phone": "(+84) 0903813908", "email": "maisgallery@gmail.com", "address": "600A Điện Biên Phủ, Phường Thạnh Mỹ Tây, TP. HCM", "website": "https://maisgallery.vn/", "type": "gallery"}
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.71714, 10.79902] },
+      "properties": {"name": "Mai's Gallery", "description": "A private gallery owned by Mai Do. Please book first before coming.", "phone": "(+84) 0903813908", "email": "maisgallery@gmail.com", "address": "600A Điện Biên Phủ, Phường Thạnh Mỹ Tây, TP. HCM", "website": "https://maisgallery.vn/", "type": "gallery"}
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.71714, 10.79902] },
+      "properties": {"name": "Mai's Gallery", "description": "A private gallery owned by Mai Do. Please book first before coming.", "phone": "(+84) 0903813908", "email": "maisgallery@gmail.com", "address": "600A Điện Biên Phủ, Phường Thạnh Mỹ Tây, TP. HCM", "website": "https://maisgallery.vn/", "type": "gallery"}
+    },
   ]
 }
