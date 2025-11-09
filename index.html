@@ -453,9 +453,9 @@
           });
       
         const regions = [
-          { name: "Thủ Dầu Một", coords: [10.9804, 106.6519], zoom: 11, file: "thudaumot.json" },
-          { name: "Sài Gòn", coords: [10.7769, 106.7009], zoom: 11, file: "saigon.json" },
-          { name: "Vũng Tàu", coords: [10.4114, 107.1362], zoom: 11, file: "vungtau.json" }
+          { name: "Thủ Dầu Một", coords: [10.9804, 106.6519], zoom: 11, file: "thudaumot.geojson" },
+          { name: "Sài Gòn", coords: [10.7769, 106.7009], zoom: 11, file: "saigon.geojson" },
+          { name: "Vũng Tàu", coords: [10.4114, 107.1362], zoom: 11, file: "vungtau.geojson" }
         ];
       
         const regionMarkers = L.layerGroup().addTo(map);
@@ -502,24 +502,27 @@
           map.setView(region.coords, region.zoom);
       
           fetch(region.file)
-            .then(res => res.json())
+            .then(res => res.geojson())
             .then(data => {
               placeMarkers.clearLayers();
-              data.forEach(marker => {
-                const iconType = marker.type ? marker.type.toLowerCase() : 'default';
-                const markerIcon = icons[iconType] || icons.default;
-      
-                L.marker([marker.lat, marker.lng], { icon: markerIcon })
-                  .addTo(placeMarkers)
-                  .bindPopup(`
-                    <b>${marker.name}</b><br>
-                    ${marker.description || ""}<br>
-                    ${marker.address || ""}<br>
-                    ${marker.phone ? "📞 " + marker.phone + "<br>" : ""}
-                    ${marker.email ? '✉️ <a href="mailto:' + marker.email + '">' + marker.email + "</a><br>" : ""}
-                    ${marker.website ? '<a href="' + marker.website + '" target="_blank">Visit website</a>' : ""}
-                  `);
-              });
+              
+              L.geoJSON(data, {
+                pointToLayer: function(feature, latlng) {
+                  const iconType = feature.properties.type ? feature.properties.type.toLowerCase() : 'default';
+                  const markerIcon = icons[iconType] || icons.default;
+                  return L.marker(latlng, { icon: markerIcon });
+                },
+                onEachFeature: function(feature, layer) {
+                  const props = feature.properties;
+                  let popupHtml = `<b>${props.name}</b><br>`;
+                  popupHtml += props.description ? props.description + "<br>" : "";
+                  popupHtml += props.address ? props.address + "<br>" : "";
+                  popupHtml += props.phone ? "📞 " + props.phone + "<br>" : "";
+                  popupHtml += props.email ? '✉️ <a href="mailto:' + props.email + '">' + props.email + "</a><br>" : "";
+                  popupHtml += props.website ? '<a href="' + props.website + '" target="_blank">Visit website</a>' : "";
+                  layer.bindPopup(popupHtml);
+                }
+              }).addTo(placeMarkers);
             })
             .catch(err => console.error("Error loading regional markers:", err));
         }
