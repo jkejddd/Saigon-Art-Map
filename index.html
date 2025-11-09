@@ -445,6 +445,9 @@
   
   <script>
   document.addEventListener("DOMContentLoaded", () => {
+    const script = document.createElement("script");
+      script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+      script.defer = true;
 
     const map = L.map("map").setView([10.7769, 106.7009], 8);
       L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
