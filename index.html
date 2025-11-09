@@ -502,7 +502,7 @@
           map.setView(region.coords, region.zoom);
       
           fetch(region.file)
-            .then(res => res.geojson())
+            .then(res => res.json())
             .then(data => {
               placeMarkers.clearLayers();
               
