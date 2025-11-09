@@ -18,7 +18,7 @@
     },
     {
       "type": "Feature",
-      "geometry": { "type": "Point", "coordinates": [106.71714, 10.79902] },
+      "geometry": { "type": "Point", "coordinates": [106.69755, 10.78848] },
       "properties": {"name": "Galerie Quynh", "description": "Galerie Quynh is a well-known commercial gallery specialising in contemporary art. The gallery has 20 years of experience in exhibiting and developing contemporary art in Vietnam. Galerie Quynh là một phòng tranh thương mại về nghệ thuật đương đại khá nổi tiếng. Phòng tranh đã có thâm niên 20 năm hoạt động trong lĩnh vực trưng bày, phát triển nền nghệ thuật đương đại tại Việt Nam.", "phone": "(+84) 0283 822 72 18", "email": "info@galeriequynh.com", "address": "118 Nguyễn Văn Thủ, Phường Tân Định, TP. HCM", "website": "https://www.galeriequynh.com/", "type": "gallery"}
     },
     {
