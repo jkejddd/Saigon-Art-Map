@@ -23,7 +23,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=Mozilla+Text&family=Roboto+Flex:opsz,wdth,wght,GRAD@8..144,44,415,80&display=swap" rel="stylesheet" media="print" onload="this.media='all'">  
   
   <link rel="preconnect" href="https://basemaps.cartocdn.com" crossorigin>
-  <link rel="preconnect" href="https://cartocdn.com" crossorigin>  
+  <link rel="preconnect" href="https://cartocdn.com" crossorigin>
   
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"></noscript>  
@@ -331,100 +331,100 @@
       <h2 class="texth1">Our Map</h2>
       <div id="map" width="100%"></div>
     </section>
-  </main>
 
-  <section class="about-section" id="about">
-    <h2 class="texth1">About Saigon Art Map</h2>
-    <p class="textp about">Art is a way for humans to express their creativity, and for tens of thousands of millenia, art has evolved in unimaginable ways. Saigon Art Map is a collective map of all things art in Ho Chi Minh, wether it be Art Galleries, Art Shops, Museums, Venues, Halls or anything else, you name it. This project was started by Mai Do in 2016, and it continues to grow as a massive collection of art addresses. Mai imagines a day where Saigon Art Map is a massive online network, as well as physical hard copies, which can be used to explore the history and culture of this city.</p>
-    <br>
-    <p class="textp about">Nghệ thuật cho thấy sự tiến hóa trong tư duy thẩm mỹ, sức sống với khát vọng tự do nội tâm của con người. Vậy làm thế nào để có được một hình dung khái lược, nhanh chóng  và thú vị về sức sống ấy ở một nơi chốn rộng lớn như Sài Gòn – Thành phố Hồ Chí Minh? Câu trả lời thú vị nhất chính là một bản đồ nghệ thuật thị giác của thành phố này. Một ngày gần đây nhất, hình ảnh và thông tin về nơi chốn của bạn sẽ hiện diện trên các phiên bản trực tuyến (online) và bản in (hard copy) của Saigon Art Map, cho thấy tình yêu nghệ thuật và sức sống tinh thần của riêng bạn, của cả thành phố này!  Đây là dự án mình đã khởi xướng từ 2016, qua nhiều thời gian nhiều thay đổi chúng mình muốn trở lại với các bạn. Cho mình phương án thực thi hiệu quả nhất.<br><br>- Mai Do, founder</p>
-  </section>
-
-  <section class="form-section" id="form">
-  <form id="artForm">
-    <h2 class="texth1">Not on here? Fill this form!</h2>
-    <p>It will take a few days to add your art site on the map!</p>
-      <div class="gname formdiv">
-        <label for="gname" class="texth2">Art Space Name:</label><br>
-        <input type="text" id="gname" name="gname" class="form" placeholder=" My Gallery" required>
-      </div>
+    <section class="about-section" id="about">
+      <h2 class="texth1">About Saigon Art Map</h2>
+      <p class="textp about">Art is a way for humans to express their creativity, and for tens of thousands of millenia, art has evolved in unimaginable ways. Saigon Art Map is a collective map of all things art in Ho Chi Minh, wether it be Art Galleries, Art Shops, Museums, Venues, Halls or anything else, you name it. This project was started by Mai Do in 2016, and it continues to grow as a massive collection of art addresses. Mai imagines a day where Saigon Art Map is a massive online network, as well as physical hard copies, which can be used to explore the history and culture of this city.</p>
       <br>
-      <div class="address formdiv">
-        <label for="address" class="texth2">Address:</label><br>
-        <input type="text" id="address" name="address" class="form" placeholder=" 7 Công trường Lam Sơn, phường Sài Gòn, TP. HCM" required><br><br>
-      </div>
-      <div class="govname formdiv">
-        <label for="govname" class="texth2">Full Name:</label><br>
-        <input type="text" id="govname" name="govname" class="form" placeholder=" John Smith" required><br><br>
-      </div>
-      <div class="email formdiv">
-        <label for="email" class="texth2">Email Address:</label><br>
-        <input type="email" id="email" name="email" class="form" placeholder=" email@example.com" required><br><br>
-      </div>
-      <div class="phonenum formdiv">
-        <label for="phonenum" class="texth2">Phone Number:</label><br>
-        <input type="tel" id="phonenum" name="phonenum" class="form" placeholder=" +84 1234567890" required><br><br>
-      </div>
-      <div>
-        <label for="website" class="texth2">Website:</label><br>
-        <input type="url" id="website" name="website" class="form" placeholder="https://example.com"><br><br>
-      </div>
-      <div class="typeofplace formdiv">
-        <label for="typeofplace" class="texth2">Type:</label><br>
-        <select type="text" id="typeofplace" name="typeofplace" class="form" required>
-          <option value="" selected disabled>~ Select an Option ~</option>
-          <option value="gallery">Gallery</option>
-          <option value="cafe">Café</option>
-          <option value="museum">Museum</option>
-          <option value="studio">Studio</option>
-          <option value="other">Other</option>
-        </select>
-        <br><br>
-      </div>
-      <div class="details formdiv">
-        <label for="details" class="texth2">Additional Details:</label><br>
-        <input type="text" id="details" name="details" class="form" placeholder=" Please call first to book before visiting"><br><br>
-      </div>
-      <button type="submit" class="submit">Submit</button>
-      <br>
-    </form>
-    <p id="form-status" class="status-message"></p>
-        </section>
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        document.getElementById('artForm').addEventListener('submit', async function (e) {
-          e.preventDefault();
-    
-          const status = document.getElementById('form-status');
-          status.textContent = 'Submitting...';
-          status.className = 'status-message show';
-    
-          const formData = new FormData(this);
-    
-          try {
-            const scriptURL = 'https://script.google.com/macros/s/AKfycbxu-j5xqPR1-gwl1j0V9sGNczPtlMGfjWVVqcNtvBtRLzE2HwQLpcw9N3XMQQeimqgn9g/exec';
-            const proxyURL = `https://cors-proxy.qs5q9nxh8d.workers.dev/?url=${encodeURIComponent(scriptURL)}`;
-    
-            const response = await fetch(proxyURL, {
-              method: 'POST',
-              body: formData
-            });
-    
-            if (response.ok) {
-              status.textContent = '✅ Submitted successfully!';
-              status.classList.add('success');
-              this.reset();
-            } else {
-              throw new Error('Server error');
+      <p class="textp about">Nghệ thuật cho thấy sự tiến hóa trong tư duy thẩm mỹ, sức sống với khát vọng tự do nội tâm của con người. Vậy làm thế nào để có được một hình dung khái lược, nhanh chóng  và thú vị về sức sống ấy ở một nơi chốn rộng lớn như Sài Gòn – Thành phố Hồ Chí Minh? Câu trả lời thú vị nhất chính là một bản đồ nghệ thuật thị giác của thành phố này. Một ngày gần đây nhất, hình ảnh và thông tin về nơi chốn của bạn sẽ hiện diện trên các phiên bản trực tuyến (online) và bản in (hard copy) của Saigon Art Map, cho thấy tình yêu nghệ thuật và sức sống tinh thần của riêng bạn, của cả thành phố này!  Đây là dự án mình đã khởi xướng từ 2016, qua nhiều thời gian nhiều thay đổi chúng mình muốn trở lại với các bạn. Cho mình phương án thực thi hiệu quả nhất.<br><br>- Mai Do, founder</p>
+    </section>
+  
+    <section class="form-section" id="form">
+    <form id="artForm">
+      <h2 class="texth1">Not on here? Fill this form!</h2>
+      <p>It will take a few days to add your art site on the map!</p>
+        <div class="gname formdiv">
+          <label for="gname" class="texth2">Art Space Name:</label><br>
+          <input type="text" id="gname" name="gname" class="form" placeholder=" My Gallery" required>
+        </div>
+        <br>
+        <div class="address formdiv">
+          <label for="address" class="texth2">Address:</label><br>
+          <input type="text" id="address" name="address" class="form" placeholder=" 7 Công trường Lam Sơn, phường Sài Gòn, TP. HCM" required><br><br>
+        </div>
+        <div class="govname formdiv">
+          <label for="govname" class="texth2">Full Name:</label><br>
+          <input type="text" id="govname" name="govname" class="form" placeholder=" John Smith" required><br><br>
+        </div>
+        <div class="email formdiv">
+          <label for="email" class="texth2">Email Address:</label><br>
+          <input type="email" id="email" name="email" class="form" placeholder=" email@example.com" required><br><br>
+        </div>
+        <div class="phonenum formdiv">
+          <label for="phonenum" class="texth2">Phone Number:</label><br>
+          <input type="tel" id="phonenum" name="phonenum" class="form" placeholder=" +84 1234567890" required><br><br>
+        </div>
+        <div>
+          <label for="website" class="texth2">Website:</label><br>
+          <input type="url" id="website" name="website" class="form" placeholder="https://example.com"><br><br>
+        </div>
+        <div class="typeofplace formdiv">
+          <label for="typeofplace" class="texth2">Type:</label><br>
+          <select type="text" id="typeofplace" name="typeofplace" class="form" required>
+            <option value="" selected disabled>~ Select an Option ~</option>
+            <option value="gallery">Gallery</option>
+            <option value="cafe">Café</option>
+            <option value="museum">Museum</option>
+            <option value="studio">Studio</option>
+            <option value="other">Other</option>
+          </select>
+          <br><br>
+        </div>
+        <div class="details formdiv">
+          <label for="details" class="texth2">Additional Details:</label><br>
+          <input type="text" id="details" name="details" class="form" placeholder=" Please call first to book before visiting"><br><br>
+        </div>
+        <button type="submit" class="submit">Submit</button>
+        <br>
+      </form>
+      <p id="form-status" class="status-message"></p>
+          </section>
+      <script>
+        document.addEventListener("DOMContentLoaded", () => {
+          document.getElementById('artForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+      
+            const status = document.getElementById('form-status');
+            status.textContent = 'Submitting...';
+            status.className = 'status-message show';
+      
+            const formData = new FormData(this);
+      
+            try {
+              const scriptURL = 'https://script.google.com/macros/s/AKfycbxu-j5xqPR1-gwl1j0V9sGNczPtlMGfjWVVqcNtvBtRLzE2HwQLpcw9N3XMQQeimqgn9g/exec';
+              const proxyURL = `https://cors-proxy.qs5q9nxh8d.workers.dev/?url=${encodeURIComponent(scriptURL)}`;
+      
+              const response = await fetch(proxyURL, {
+                method: 'POST',
+                body: formData
+              });
+      
+              if (response.ok) {
+                status.textContent = '✅ Submitted successfully!';
+                status.classList.add('success');
+                this.reset();
+              } else {
+                throw new Error('Server error');
+              }
+            } catch (error) {
+              status.textContent = '❌ Something went wrong. Try again.';
+              status.classList.add('error');
             }
-          } catch (error) {
-            status.textContent = '❌ Something went wrong. Try again.';
-            status.classList.add('error');
-          }
+          });
         });
-      });
-    </script>
-  </section>
+      </script>
+    </section>
+  </main>
 
   <footer>
     <section class="footer-section" id="footer">
@@ -435,12 +435,10 @@
       <br><br><br><br>
   </footer>
 
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+
   <script>
   document.addEventListener("DOMContentLoaded", () => {
-    const script = document.createElement("script");
-      script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
-      script.defer = true;
-
     const map = L.map("map").setView([10.7769, 106.7009], 8);
       L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
