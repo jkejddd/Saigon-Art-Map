@@ -1,10 +1,9 @@
 /*   # All HTML pages
   Cache-Control: public, max-age=0, must-revalidate
 
-/*.json
+/*.geojson
   Cache-Control: public, max-age=0, must-revalidate
 
-/*.geojson
 /*.woff2
 /*.woff
 /*.ttf
