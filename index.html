@@ -442,7 +442,6 @@
                   status.textContent = '✅ Submitted successfully!';
                   status.classList.add('success');
                   form.reset();
-                  window.turnstile.reset();
                 } else {
                   status.textContent = '❌ Error: ' + responseText;
                   status.classList.add('error');
