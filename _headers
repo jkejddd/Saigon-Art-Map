@@ -1,7 +1,9 @@
 /*   # All HTML pages
   Cache-Control: public, max-age=0, must-revalidate
 
-/*.geojson
+/saigon.geojson
+/vungtau.geojson
+/thudaumot.geojson
   Cache-Control: public, max-age=0, must-revalidate
 
 /*.woff2
@@ -10,8 +12,11 @@
 /*.css
 /*.js
 /*.svg
+/markers/*.svg
 /*.png
 /*.jpg
 /*.jpeg
 /*.webp
+/*.geojson
+/hcmc.geojson
   Cache-Control: public, max-age=31536000, immutable
