@@ -404,7 +404,7 @@
               status.textContent = 'Submitting...';
               status.className = 'status-message show';
           
-              const token = turnstile.getResponse(); 
+              const token = turnstile.getResponse();
               if (!token) {
                 status.textContent = 'Please complete the CAPTCHA.';
                 return;
