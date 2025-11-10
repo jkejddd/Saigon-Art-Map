@@ -221,7 +221,7 @@
   
       .form-section form {
         width: 100vw;
-        height: 130vh;
+        height: auto;
         margin: 0 auto;
         padding: 0 1.5rem;
         display: flex;
@@ -385,9 +385,14 @@
             <label for="details" class="texth2">Additional Details:</label><br>
             <input type="text" id="details" name="details" class="form" placeholder=" Please call first to book before visiting"><br><br>
          </div>
+         <br><br>
          <div class="cf-turnstile" data-sitekey="0x4AAAAAACAHkbz9wVj7WVoe"></div>
+         <br><br>
          <button type="submit" class="submit">Submit</button>
+         <br>
         </form>
+        <p id="form-status" class="status-message"></p>
+        <br><br>
         <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
         <script>
           document.addEventListener("DOMContentLoaded", () => {
