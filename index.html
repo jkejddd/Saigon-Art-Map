@@ -433,18 +433,23 @@
                   headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                   body: params.toString()
                 });
-          
+              
+                const responseText = await response.text();
+                console.log('Response status:', response.status);
+                console.log('Response text:', responseText);
+              
                 if (response.ok) {
                   status.textContent = '✅ Submitted successfully!';
                   status.classList.add('success');
                   form.reset();
+                  window.turnstile.reset();
                 } else {
-                  status.textContent = '❌ Something went wrong.';
+                  status.textContent = '❌ Error: ' + responseText;
                   status.classList.add('error');
                 }
               } catch (err) {
-                console.error(err);
-                status.textContent = '❌ Something went wrong.';
+                console.error('Fetch error:', err);
+                status.textContent = '❌ Network error: ' + err.message;
                 status.classList.add('error');
               }
             });
