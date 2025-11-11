@@ -398,66 +398,92 @@
         <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async></script>
         
         <script type="module">
-          import PMTiles from 'https://cdn.jsdelivr.net/npm/@pmtiles/pmtiles@0.7.0/dist/index.js';
-          
+          import { Protocol } from 'https://unpkg.com/pmtiles@3.0.3/dist/index.js';
+      
           document.addEventListener("DOMContentLoaded", async () => {
+            // Register PMTiles protocol
+            let protocol = new Protocol();
+            maplibregl.addProtocol("pmtiles", protocol.tile);
+      
             const map = new maplibregl.Map({
               container: 'map',
               style: 'https://tiles.openfreemap.org/styles/liberty',
               center: [106.7009, 10.7769],
               zoom: 8
             });
-          
+      
             map.addControl(new maplibregl.NavigationControl());
-          
-            const overlayData = await fetch('hcmc.geojson').then(res => res.json());
+      
+            // --- HCMC Boundary GeoJSON ---
+            const overlayData = {
+              "type": "FeatureCollection",
+              "features": [{
+                "type": "Feature",
+                "geometry": {
+                  "type": "Polygon",
+                  "coordinates": [[
+                    [106.4, 10.4], [107.0, 10.4], [107.0, 11.2], [106.4, 11.2], [106.4, 10.4]
+                  ]]
+                }
+              }]
+            };
+      
+            // --- Regions ---
+            const regions = [
+              { name: "Thủ Dầu Một", coords: [106.6519, 10.9804], zoom: 13, pmtiles: "thudaumot.pmtiles" },
+              { name: "Sài Gòn", coords: [106.7009, 10.7769], zoom: 12, pmtiles: "saigon.pmtiles" },
+              { name: "Vũng Tàu", coords: [107.1362, 10.4114], zoom: 13, pmtiles: "vungtau.pmtiles" }
+            ];
+      
+            let currentRegion = null;
+            let cityLayerId = "cityLabels";
+            let cityClickLayerId = "cityClickLayer";
+      
+            // --- Back button ---
+            const backBtn = document.createElement("div");
+            backBtn.style.position = "absolute";
+            backBtn.style.top = "10px";
+            backBtn.style.right = "10px";
+            backBtn.style.padding = "8px 12px";
+            backBtn.style.background = "white";
+            backBtn.style.borderRadius = "4px";
+            backBtn.style.cursor = "pointer";
+            backBtn.style.fontWeight = "600";
+            backBtn.style.boxShadow = "0 2px 4px rgba(0,0,0,0.2)";
+            backBtn.style.zIndex = "1000";
+            backBtn.innerText = "← Back";
+            backBtn.style.display = "none";
+            backBtn.onclick = closeRegion;
+            document.body.appendChild(backBtn);
+      
             map.on('load', () => {
-              map.addSource('hcmcOverlay', { type: 'geojson', data: overlayData });
+              // Add HCMC overlay
+              map.addSource('hcmcOverlay', { 
+                type: 'geojson', 
+                data: overlayData 
+              });
+              
               map.addLayer({
                 id: 'hcmcOverlayLayer',
                 type: 'fill',
                 source: 'hcmcOverlay',
                 paint: {
-                  'fill-color': 'green',
+                  'fill-color': '#22c55e',
                   'fill-opacity': 0.1
                 }
               });
+              
               map.addLayer({
                 id: 'hcmcOverlayOutline',
                 type: 'line',
                 source: 'hcmcOverlay',
                 paint: {
-                  'line-color': 'green',
-                  'line-width': 1.5
+                  'line-color': '#22c55e',
+                  'line-width': 2
                 }
               });
-            });
-          
-            const regions = [
-              { name: "Thủ Dầu Một", coords: [106.6519, 10.9804], zoom: 11, pmtiles: "thudaumot.pmtiles" },
-              { name: "Sài Gòn", coords: [106.7009, 10.7769], zoom: 11, pmtiles: "saigon.pmtiles" },
-              { name: "Vũng Tàu", coords: [107.1362, 10.4114], zoom: 11, pmtiles: "vungtau.pmtiles" }
-            ];
-          
-            let cityLayerId = "cityLabels";
-            let regionSourceId = "regionMarkers";
-            let regionLayerId = "regionMarkersLayer";
-          
-            const backBtn = document.createElement("div");
-            backBtn.style.position = "absolute";
-            backBtn.style.top = "10px";
-            backBtn.style.right = "10px";
-            backBtn.style.padding = "6px 10px";
-            backBtn.style.background = "white";
-            backBtn.style.borderRadius = "4px";
-            backBtn.style.cursor = "pointer";
-            backBtn.style.fontWeight = "600";
-            backBtn.innerText = "← Back";
-            backBtn.style.display = "none";
-            backBtn.onclick = closeRegion;
-            document.body.appendChild(backBtn);
-          
-            map.on('load', () => {
+      
+              // Add city markers
               map.addSource(cityLayerId, {
                 type: 'geojson',
                 data: {
@@ -469,7 +495,8 @@
                   }))
                 }
               });
-          
+      
+              // City labels
               map.addLayer({
                 id: cityLayerId,
                 type: 'symbol',
@@ -478,56 +505,83 @@
                   'text-field': ['get', 'name'],
                   'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
                   'text-size': 16,
-                  'text-offset': [0, 1.2],
+                  'text-offset': [0, 1.5],
                   'text-anchor': 'top'
                 },
                 paint: {
-                  'text-color': 'blue'
+                  'text-color': '#2563eb',
+                  'text-halo-color': '#ffffff',
+                  'text-halo-width': 2
                 }
               });
-          
+      
+              // Clickable area
               map.addLayer({
-                id: 'cityClickLayer',
+                id: cityClickLayerId,
                 type: 'circle',
                 source: cityLayerId,
-                paint: { 'circle-radius': 20, 'circle-color': 'rgba(0,0,0,0)' }
+                paint: { 
+                  'circle-radius': 20, 
+                  'circle-color': 'rgba(0,0,0,0)' 
+                }
               });
-          
-              map.on('click', 'cityClickLayer', e => {
+      
+              // Click handler
+              map.on('click', cityClickLayerId, e => {
                 const feature = e.features[0];
                 const region = regions.find(r => r.name === feature.properties.name);
                 if (region) openRegion(region);
               });
-          
-              map.getCanvas().style.cursor = 'pointer';
-            });
-          
-            async function loadPMTiles(map, pmtilesUrl, sourceId) {
-              const pmtiles = new PMTiles(pmtilesUrl);
-              await pmtiles.open();
-              const tileUrl = await pmtiles.getTileURLTemplate();
-          
-              map.addSource(sourceId, {
-                type: "vector",
-                tiles: [tileUrl],
-                minzoom: 0,
-                maxzoom: 14
+      
+              // Cursor changes
+              map.on('mouseenter', cityClickLayerId, () => {
+                map.getCanvas().style.cursor = 'pointer';
               });
-            }
-          
+      
+              map.on('mouseleave', cityClickLayerId, () => {
+                map.getCanvas().style.cursor = '';
+              });
+            });
+      
             async function openRegion(region) {
               backBtn.style.display = "block";
-          
+              currentRegion = region;
+      
+              // Hide city markers
               map.setLayoutProperty(cityLayerId, 'visibility', 'none');
-          
-              map.flyTo({ center: region.coords, zoom: region.zoom });
-          
-              if (!map.getSource(regionSourceId)) {
-                await loadPMTiles(map, region.pmtiles, regionSourceId);
+              map.setLayoutProperty(cityClickLayerId, 'visibility', 'none');
+      
+              // Fly to region
+              map.flyTo({ center: region.coords, zoom: region.zoom, duration: 1500 });
+      
+              // Remove old region layers if switching regions
+              const oldSourceId = 'regionMarkers';
+              const oldLayerId = 'regionMarkersLayer';
+              
+              if (map.getLayer(oldLayerId)) {
+                map.removeLayer(oldLayerId);
+              }
+              if (map.getSource(oldSourceId)) {
+                map.removeSource(oldSourceId);
+              }
+      
+              // Add new region source and layer
+              const sourceId = `region-${region.name}`;
+              const layerId = `layer-${region.name}`;
+      
+              if (!map.getSource(sourceId)) {
+                map.addSource(sourceId, {
+                  type: "vector",
+                  url: `pmtiles://${region.pmtiles}`,
+                  maxzoom: 14
+                });
+              }
+      
+              if (!map.getLayer(layerId)) {
                 map.addLayer({
-                  id: regionLayerId,
+                  id: layerId,
                   type: 'symbol',
-                  source: regionSourceId,
+                  source: sourceId,
                   'source-layer': 'markers',
                   layout: {
                     'icon-image': ['get', 'icon'],
@@ -535,37 +589,59 @@
                     'icon-allow-overlap': true,
                     'text-field': ['get', 'name'],
                     'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
-                    'text-size': 14,
+                    'text-size': 12,
                     'text-offset': [0, 1.2],
-                    'text-anchor': 'top',
-                    'text-allow-overlap': true
+                    'text-anchor': 'top'
+                  },
+                  paint: {
+                    'text-color': '#1f2937',
+                    'text-halo-color': '#ffffff',
+                    'text-halo-width': 1.5
                   }
                 });
-          
-                map.on('click', regionLayerId, (e) => {
+      
+                // Popup on click
+                map.on('click', layerId, (e) => {
                   const props = e.features[0].properties;
                   new maplibregl.Popup()
                     .setLngLat(e.lngLat)
                     .setHTML(`
-                      <b>${props.name}</b><br>
-                      ${props.description}<br>
-                      ${props.address ? props.address + "<br>" : ""}
-                      ${props.phone ? "📞 " + props.phone + "<br>" : ""}
-                      ${props.email ? '✉️ <a href="mailto:' + props.email + '">' + props.email + '</a><br>' : ''}
-                      ${props.website ? '<a href="' + props.website + '" target="_blank">Visit website</a>' : ''}
+                      <div style="font-family: system-ui, sans-serif;">
+                        <b style="font-size: 14px;">${props.name || 'Location'}</b><br>
+                        ${props.description ? props.description + "<br>" : ""}
+                        ${props.address ? props.address + "<br>" : ""}
+                        ${props.phone ? "📞 " + props.phone + "<br>" : ""}
+                        ${props.email ? '✉️ <a href="mailto:' + props.email + '">' + props.email + '</a><br>' : ''}
+                        ${props.website ? '<a href="' + props.website + '" target="_blank">Visit website</a>' : ''}
+                      </div>
                     `)
                     .addTo(map);
                 });
+      
+                map.on('mouseenter', layerId, () => {
+                  map.getCanvas().style.cursor = 'pointer';
+                });
+      
+                map.on('mouseleave', layerId, () => {
+                  map.getCanvas().style.cursor = '';
+                });
               }
-          
-              map.setLayoutProperty(regionLayerId, 'visibility', 'visible');
             }
-          
+      
             function closeRegion() {
               backBtn.style.display = "none";
+              currentRegion = null;
+              
+              // Show city markers
               map.setLayoutProperty(cityLayerId, 'visibility', 'visible');
-              if (map.getLayer(regionLayerId)) map.setLayoutProperty(regionLayerId, 'visibility', 'none');
-              map.flyTo({ center: [106.7009, 10.7769], zoom: 8 });
+              map.setLayoutProperty(cityClickLayerId, 'visibility', 'visible');
+              
+              // Fly back to overview
+              map.flyTo({ 
+                center: [106.7009, 10.7769], 
+                zoom: 8,
+                duration: 1500 
+              });
             }
           });
         </script>
