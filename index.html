@@ -27,8 +27,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=Mozilla+Text&family=Roboto+Flex:opsz,wdth,wght,GRAD@8..144,44,415,80&display=swap" rel="stylesheet" media="print" onload="this.media='all'"> 
 
     <link rel="preconnect" href="https://unpkg.com" crossorigin/>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.css">
+    <link href="https://unpkg.com/maplibre-gl@^5.12.0/dist/maplibre-gl.css" rel="stylesheet" media="print" onload="this.media='all'"/>
+    <script src="https://unpkg.com/maplibre-gl@^5.12.0/dist/maplibre-gl.js" defer></script>
     
     <style>
       html, body, .hcmctext {
@@ -466,12 +466,128 @@
         <a class="contact" href="https://www.facebook.com/saigonartmap">Facebook fanpage: @saigonartmap</a>
         <br><br><br><br>
     </footer>
-    
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
-    <script src="https://unpkg.com/maplibre-gl@5.12.0/dist/maplibre-gl.js" defer></script>
-    <script src="https://unpkg.com/@maplibre/maplibre-gl-leaflet@0.1.3/leaflet-maplibre-gl.js" defer></script>
-    
+
     <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const map = new maplibregl.Map({
+        container: 'map',
+        style: 'https://tiles.openfreemap.org/styles/liberty.json',
+        center: [106.7009, 10.7769],
+        zoom: 8
+      });
+    
+      map.addControl(new maplibregl.NavigationControl());
+    
+      const overlayData = await fetch('hcmc.geojson').then(res => res.json());
+      map.on('load', () => {
+        map.addSource('hcmcOverlay', { type: 'geojson', data: overlayData });
+        map.addLayer({
+          id: 'hcmcOverlayLayer',
+          type: 'fill',
+          source: 'hcmcOverlay',
+          paint: {
+            'fill-color': 'green',
+            'fill-opacity': 0.1,
+            'fill-outline-color': 'green'
+          }
+        });
+      });
+    
+      const regions = [
+        { name: "Thủ Dầu Một", coords: [10.9804, 106.6519], zoom: 11, pmtiles: "thudaumot.pmtiles" },
+        { name: "Sài Gòn", coords: [10.7769, 106.7009], zoom: 11, pmtiles: "saigon.pmtiles" },
+        { name: "Vũng Tàu", coords: [10.4114, 107.1362], zoom: 11, pmtiles: "vungtau.pmtiles" }
+      ];
+    
+      let currentMarkers = [];
+    
+      const backBtn = document.createElement("div");
+      backBtn.style.position = "absolute";
+      backBtn.style.top = "10px";
+      backBtn.style.right = "10px";
+      backBtn.style.padding = "6px 10px";
+      backBtn.style.background = "white";
+      backBtn.style.borderRadius = "4px";
+      backBtn.style.cursor = "pointer";
+      backBtn.style.fontWeight = "600";
+      backBtn.innerText = "← Back";
+      backBtn.style.display = "none";
+      backBtn.onclick = closeRegion;
+      document.body.appendChild(backBtn);
+    
+      function renderRegionMarkers() {
+        currentMarkers.forEach(m => m.remove());
+        currentMarkers = [];
+    
+        regions.forEach(region => {
+          const el = document.createElement('div');
+          el.className = 'region-marker';
+          el.style.width = '20px';
+          el.style.height = '20px';
+          el.style.background = 'blue';
+          el.style.borderRadius = '50%';
+          el.style.cursor = 'pointer';
+    
+          const marker = new maplibregl.Marker(el)
+            .setLngLat([region.coords[1], region.coords[0]])
+            .setPopup(new maplibregl.Popup({ offset: 25 }).setText(region.name))
+            .addTo(map);
+    
+          el.addEventListener('click', () => openRegion(region));
+    
+          currentMarkers.push(marker);
+        });
+      }
+    
+      renderRegionMarkers();
+    
+      async function openRegion(region) {
+        currentMarkers.forEach(m => m.remove());
+        currentMarkers = [];
+        backBtn.style.display = "block";
+    
+        map.flyTo({ center: [region.coords[1], region.coords[0]], zoom: region.zoom });
+    
+        const data = await fetch(region.pmtiles).then(res => res.json());
+    
+        data.features.forEach(f => {
+          const el = document.createElement('div');
+          el.className = 'marker';
+          el.style.width = '40px';
+          el.style.height = '40px';
+          el.style.backgroundSize = 'contain';
+          el.style.backgroundImage = `url(${f.properties.icon})`;
+          el.style.cursor = 'pointer';
+    
+          const popupContent = `
+            <b>${f.properties.name}</b><br>
+            ${f.properties.description.replace(/\n/g,'<br>')}<br>
+            ${f.properties.address ? f.properties.address + "<br>" : ""}
+            ${f.properties.phone ? "📞 " + f.properties.phone + "<br>" : ""}
+            ${f.properties.email ? '✉️ <a href="mailto:' + f.properties.email + '">' + f.properties.email + '</a><br>' : ''}
+            ${f.properties.website ? '<a href="' + f.properties.website + '" target="_blank">Visit website</a>' : ''}
+          `;
+    
+          const marker = new maplibregl.Marker(el)
+            .setLngLat(f.geometry.coordinates)
+            .setPopup(new maplibregl.Popup({ offset: 25 }).setHTML(popupContent))
+            .addTo(map);
+    
+          currentMarkers.push(marker);
+        });
+      }
+    
+      function closeRegion() {
+        currentMarkers.forEach(m => m.remove());
+        currentMarkers = [];
+        backBtn.style.display = "none";
+        map.flyTo({ center: [106.7009, 10.7769], zoom: 8 });
+        renderRegionMarkers();
+      }
+    });
+    </script>
+    
+    <!-- <script>
       document.addEventListener("DOMContentLoaded", () => {
         const map = L.map("map").setView([10.7769, 106.7009], 8);
         
@@ -570,6 +686,6 @@
           map.setView([10.7769, 106.7009], 8);
         }
       });
-    </script>
+    </script> -->
   </body>
 </html>
