@@ -1,0 +1,70 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.71714, 10.79902] },
+      "properties": {"name": "Mai's Gallery", "description": "/nThe gallery is located on the penthouse floor of the Cantavil building, offering a luxurious and private space. The gallery does not follow current trends but has its own distinct identity. It caters to a discerning audience of professionals and is not aimed at the general public. Please book first before visiting. /n/nGallery tọa lạc tại tầng penthouse của tòa Cantavil, không gian sang trọng và riêng tư. Gallery không chạy theo xu hướng hiện nay mà theo một bản sắc riêng, Gallery hướng đến nhóm chiêm nghiệm là giới chuyên môn và không mang tính đại chúng. Vui lòng đặt chỗ trước khi đến thăm.", "phone": "(+84) 090 381 3908", "email": "maisgallery@gmail.com", "address": "/n600A Điện Biên Phủ, Phường Thạnh Mỹ Tây, TP. HCM/n", "website": "https://maisgallery.vn/", "type": "gallery"}
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.69095, 10.75911] },
+      "properties": {"name": "TDX Ice Factory", "description": "/nConverted from an old ice factory, it has become a complex comprising a showroom, offices and event space dedicated to art, design, architecture and creativity. /n/nĐược cải tạo từ một nhà máy nước đá cũ, trở thành tổ hợp Showroom, văn phòng và không gian tổ chức sự kiện liên quan đến nghệ thuật, thiết kế, kiến trúc và sáng tạo.", "phone": "(+84) 093 635 4846", "email": "info@districteight.com", "address": "/n19/45 Trần Ðình Xu, Phường Cầu Ông Lãnh, TP. HCM/n", "website": "https://districteight.com/", "type": "studio"}
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.69954, 10.77611] },
+      "properties": {"name": "Bảo tàng Thành phố Hồ Chí Minh, Museum of Ho Chi Minh City", "description": "/nOne of the city's major museums. The museum is an architectural masterpiece steeped in classic French style with exquisite sculptural details, making it ideal for research activities (history, culture, religion, etc.). /n/nMột trong những bảo tàng lớn của thành phố. Bảo tàng là một công trình kiến trúc nghệ thuật mang đậm phong cách Pháp cổ kính với chi tiết điêu khắc tinh xảo, bảo tàng thích hợp cho hoạt động nghiên cứu (lịch sử, văn hóa, tín ngưỡng,...)", "phone": "(+84)  028 3829 9741", "email": "baotangtphcm@gmail.com", "address": "/n65 Lý Tự Trọng, Phường Sài Gòn, TP. HCM/n", "website": "https://hcmc-museum.edu.vn/", "type": "museum"}
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.69755, 10.78848] },
+      "properties": {"name": "Galerie Quynh", "description": "/nGalerie Quynh is a well-known commercial gallery specialising in contemporary art. The gallery has 20 years of experience in exhibiting and developing contemporary art in Vietnam. /n/nGalerie Quynh là một phòng tranh thương mại về nghệ thuật đương đại khá nổi tiếng. Phòng tranh đã có thâm niên 20 năm hoạt động trong lĩnh vực trưng bày, phát triển nền nghệ thuật đương đại tại Việt Nam.", "phone": "(+84) 028 3822 7218", "email": "info@galeriequynh.com", "address": "/n118 Nguyễn Văn Thủ, Phường Tân Định, TP. HCM/n", "website": "https://www.galeriequynh.com/", "type": "gallery"}
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.69558, 10.77922] },
+      "properties": {"name": "Nam Thi House", "description": "/nLocated in an old Mordenism-style villa that has been renovated and refurbished, this is a cultural and artistic space that serves as a place for reading and coffee, as well as a venue for regular craft workshops and talkshows on art, architecture and culture that are popular with young people. /n/nNằm trong một căn biệt thự cũ phong cách Mordenism được cải tạo và chỉnh trang lại, đây là không gian văn hóa - nghệ thuật vừa là nơi để đọc sách - cà phê, cũng là nơi thường xuyên diễn ra những workshop thủ công, những talkshow nghệ thuật, kiến trúc, văn hóa được giới trẻ yêu thích.", "phone": "(+84) 028 2212 2448", "email": "welcome@namthihouse.vn", "address": "/n152 Nam Kỳ Khởi Nghĩa, Phường Sài Gòn, TP. HCM/n", "website": "https://namthihouse.vn/", "type": "cafe"}
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.69982, 10.77513] },
+      "properties": {"name": "Nhà Trưng Bày Triển Lãm Thành Phố", "description": "The exhibition space displays works of high cultural tradition. Không gian trưng bày những tác phẩm mang tính Truyền Thống Văn Hoá cao.", "phone": "(+84) 090 334 9101", "email": null, "address": "92 Lê Thánh Tôn, Phường Sài Gòn, TP. HCM", "website": null, "type": "museum"}
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.70303, 10.77580] },
+      "properties": {"name": "An Fine Art Gallery", "description": "/nSimilar to other galleries in the area, An Fine Art Gallery is also a commercial art gallery. This gallery regularly updates information about events on its Facebook page, making it relatively easy to access. /n/nTương tự những Gallery khác trong khu vực, An fine Art Gallery cũng là một phòng tranh thương mại về nghệ thuật. Gallery này thường xuyên cập nhật thông tin về sự kiện trên nền tảng Facebook nên tương đối dễ tiếp cận.", "phone": "(+84) 028 3824 2723", "email": "info.angallery@gmail.com", "address": "/n159 Đồng Khởi, Phường Sài Gòn, TP. HCM/n", "website": "https://angallery.art/", "type": "gallery"}
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.68774, 10.77098] },
+      "properties": {"name": "Solar Art Space", "description": "/nThis is a space for organising workshops on stained glass art, a fascinating art form in a relatively intimate and cosy setting. Those who frequently visit here are usually small organisations, families and friends who come to experience art, relax and connect. /n/nLà không gian tổ chức Workshop về nghệ thuật kính màu ghép (Stained glass), hình thức nghệ thuật này rất thú vị và không gian tương đối gần gũi ấm cúng. Những người thường xuyên đến đây thường là tổ chức nhỏ, gia đình, bạn bè đến để trải nghiệm nghệ thuật, thư giản và kết nối.", "phone": "(+84) 076 806 6079", "email": "artspacesolar@gmail.com", "address": "/n98 Tôn Thất Tùng, Phường Bến Thành, TP. HCM/n", "website": "https://www.facebook.com/solar.artspace/", "type": "studio"}
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.70714, 10.77523] },
+      "properties": {"name": "Saigon River Sightseeing", "description": "/nWaterbus - enjoy music and theatrical performances on the Saigon River. /n/nTàu du lịch - thưởng thức âm nhạc, nghệ thuật hóa trang trên sông Sài Gòn.", "phone": "(+84) 031 539 0995", "email": "booking@saigonwatergo.com", "address": "/nBến tàu Bạch Đằng – Saigon WaterGo 10B Tôn Đức Thắng, Phường Sài Gòn, TP. HCM./n", "website": "https://saigonriversightseeing.com/chi-tiet-tour/tour-saigon-river-sightseeing", "type": "other"}
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.69926, 10.77006] },
+      "properties": {"name": "Bảo tàng Mỹ thuật Thành phố Hồ Chí Minh, Museum of Fine Arts Ho Chi Minh City", "description": "/nOne of the city's major museums. The museum building was originally the mansion of one of Saigon's wealthiest Chinese merchants. The museum displays many valuable works and artefacts. Today, the museum is an important cultural and artistic venue, attracting large numbers of domestic and international visitors. /n/nMột trong những bảo tàng lớn của thành phố. Tòa Bảo tàng vốn là dinh thự của một thương gia Hoa kiều giàu có bậc nhất Sài Gòn xưa. Bảo tàng trưng bày nhiều tác phẩm, hiện vật giá trị. Hiện bảo tàng là một địa điểm văn hóa nghệ thuật quan trọng, thu hút đông đảo du khách trong và ngoài nước.", "phone": null, "email": null, "address": "/n97A Phó Đức Chính, Phường Sài Gòn, TP. HCM/n", "website": "http://baotangmythuattphcm.com.vn/", "type": "museum"}
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.70472, 10.78807] },
+      "properties": {"name": "Bảo tàng Lịch sử Thành phố Hồ Chí Minh, Museum of History Ho Chi Minh City", "description": "/nOne of the city's major museums, it houses over 40,000 artefacts, including many unique and valuable collections. The museum also impresses with its layout and arrangement of walkways, which help visitors follow and grasp the entire history of the nation. /n/nMột trong những bảo tàng lớn của thành phố, bảo tàng sở hữu hơn 40.000 hiện vật với nhiều sưu tập độc đáo, quý giá, bảo tàng cũng mang nhiều ấn tượng bởi bố cục và cách sắp xếp lối đi giúp theo dõi và nắm bắt trọn vẹn các giai đoạn lịch sử của dân tộc.", "phone": "(+84) 028 3829 8146", "email": "bt.ls.svhtt@tphcm.gov.vn", "address": "/n2 Nguyễn Bỉnh Khiêm, Phường Sài Gòn, TP. HCM/n", "website": "https://www.facebook.com/liveitfreelyinSaigon/", "type": "studio"}
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.70307, 10.77653] },
+      "properties": {"name": "Nhà hát Thành phố Hồ Chí Minh, Ho Chi Minh City Opera House", "description": "/nOne of the city's major arts venues. This is the most specialised and prestigious stage for highbrow performing arts such as symphony, ballet and opera./n/nMột trong những không gian nghệ thuật lớn của thành phố. Đây là sân khấu chuyên biệt và trang trọng nhất dành cho các loại hình nghệ thuật biểu diễn hàn lâm như giao hưởng, vũ kịch (ballet) và opera.", "phone": null, "email": null, "address": "/n7 Công trường Lam Sơn, Phường Sài Gòn, TP. HCM, Việt Nam/n", "website": "hbso.org.vn", "type": "other"}
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [106.70737, 10.77936] },
+      "properties": {"name": "Nhà ga 3A", "description": "/n(NO LONGER EXISTS) Although now only a memory, this area was once an incredibly impressive artistic space. Graffiti stood out most prominently, but it was also an exhibition space, displaying antiques, and a vibrant gathering place for the dynamic young community and art lovers./n/n (Ngừng hoạt động) Dù nay chỉ còn trong ký ức, khu vực này đã từng là một không gian nghệ thuật vô cùng ấn tượng. Nổi bật hơn cả là nghệ thuật đường phố (graffiti) nhưng nơi đây cũng đồng thời là không gian triển lãm, trưng bày đồ cổ, và là điểm hội tụ sống động của cộng đồng người trẻ năng động và những người yêu nghệ thuật.", "phone": null, "email": null, "address": "/n3A Tôn Đức Thắng, Phường Sài Gòn, TP. HCM/n", "website": null, "type": "other"}
+    }
+  ]
+}
