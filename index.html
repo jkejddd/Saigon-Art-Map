@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <title>Saigon Art Map | Map of art locations in the new HCMC</title>
+    <meta name="description" content="Saigon Art Map is your one-stop shop for all art locations in this new mega-city. Our map features numerous art locations in Saigon, Vung Tau and Thu Dau Mot!">
+    <meta name="keywords" content="Saigon, Sai gon, Ho Chi Minh City, HCMC, TP. HCM, TP HCM, Saigon Art Map, Sai gon Art Map, Art in HCMC, Art HCMC, Saigon Art, Sai gon Art, Saigon Map, Places in saigon, Art exhibits in HCMC">
+    <meta name="author" content="Sai Gon Art Map">
+
+    <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+    <link rel="icon" href="icons/icon32x32.png" sizes="32x32" type="image/png">
+    <link rel="icon" href="icons/icon16x16.png" sizes="16x16" type="image/png">
+    
+    <link rel="canonical" href="https://saigonartmap.com">
+    <link rel="preload" as="image" href="markers/galleries.svg">
+    <link rel="preload" as="image" href="markers/cafes.svg">
+    <link rel="preload" as="image" href="markers/museums.svg">
+    <link rel="preload" as="image" href="markers/studios.svg">
+    <link rel="preload" as="image" href="markers/others.svg">
+    
+    <link rel="preload" as="image" href="logsam.svg" fetchpriority="high">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=Mozilla+Text&family=Roboto+Flex:opsz,wdth,wght,GRAD@8..144,44,415,80&display=swap" rel="stylesheet" media="print" onload="this.media='all'"> 
+
+    <link rel="preconnect" href="https://unpkg.com" crossorigin/>
+    <link href="https://unpkg.com/maplibre-gl@^5.12.0/dist/maplibre-gl.css" rel="stylesheet" media="print" onload="this.media='all'"/>
+    <script src="https://unpkg.com/maplibre-gl@^5.12.0/dist/maplibre-gl.js" defer></script>
+    <script src="https://unpkg.com/@protomaps/pmtiles@1.4.0/dist/pmtiles.js" defer></script>
+    
+    <style>
+      html, body, .hcmctext {
+        margin: 0;
+        padding: 0;
+        scroll-behavior: smooth;
+        font-family: "Mozilla Text", "inter", system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        background-color: #FFFBF2;
+        color: #333;
+        overflow-x: hidden;
+      }
+  
+      h1 {
+        font-family: "Roboto Flex", "inter",system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        font-optical-sizing: auto;
+        font-weight: 257;
+        font-style: normal;
+        font-variation-settings: "slnt" 0,"wdth" 44,"GRAD" 80,"wght" 415, "opsz" 144;
+        margin-bottom: 1rem;
+        font-size: 2rem;
+        text-align: center;
+      }
+      
+      h2 {
+        font-family: "Roboto Flex", "inter",system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        font-optical-sizing: auto;
+        font-weight: 257;
+        font-style: normal;
+        font-variation-settings: "slnt" 0,"wdth" 44,"GRAD" 80,"wght" 415, "opsz" 144;
+        margin-bottom: 1rem;
+        text-align: center;
+      }
+  
+      .textp {
+        text-align: justify;
+        margin: 0 auto 1.5rem auto;
+        line-height: 1.6;
+      }
+  
+      .contact {
+        display:block;
+        text-align: center;
+        margin: 0.5rem 0;
+        color: #333;
+      }
+  
+      .texth1 {
+        font-weight: 257;
+        font-family: "Roboto Flex", system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        font-size: 6rem;
+        margin-bottom: 10px;
+      }
+  
+      .texth2 {
+        font-weight: 257;
+        font-family: "Roboto Flex", system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        font-size: 2rem;
+        margin-bottom: 10px;
+      }
+  
+      @media (max-width: 568px) {
+        .texth1 {
+          font-size: 3rem;
+        }
+      }
+      @media (max-width: 480px) {
+        .texth1 {
+          font-size: 2.5rem;
+        }
+      }
+  
+      .hero {
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        text-align: center;
+        background-color: #FFFBF2;
+      }
+  
+      .logo {
+        width: 50vw;
+        max-width: 500px;
+        height: auto;
+        animation: fadeIn 2.5s forwards ease;
+      }
+  
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(25px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+  
+      .scroll-hint {
+        position: absolute;
+        bottom: 40px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        opacity: 0.7;
+        transition: opacity 0.5s ease, transform 0.5s ease;
+      }
+  
+      .scroll-hint.hidden {
+        opacity: 0;
+        transform: translateX(20px);
+        pointer-events: none;
+      }
+  
+      .mouse {
+        width: 25px;
+        height: 40px;
+        border: 2px solid #333;
+        border-radius: 15px;
+        position: relative;
+      }
+  
+      .mouse::before {
+        content: "";
+        position: absolute;
+        top: 8px;
+        left: 50%;
+        width: 4px;
+        height: 4px;
+        background: #333;
+        border-radius: 50%;
+        transform: translateX(-50%);
+        animation: scroll 1.5s infinite;
+      }
+  
+      @keyframes scroll {
+        0% { opacity: 1; transform: translate(-50%, 0); }
+        100% { opacity: 0; transform: translate(-50%, 10px); }
+      }
+  
+      .map-section {
+        width: 100%;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        padding: 0.5rem;
+      }
+  
+      .about-section {
+        width: 100%;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+      }
+  
+      .footer-section {
+        width: 100%;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        background-color: antiquewhite;
+      }
+  
+      .about {
+        padding: 0 1.5rem;
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto 1.5rem auto;
+        box-sizing: border-box;
+      }
+  
+      #map {
+        width: 100%;
+        max-width: 1200px;
+        height: 60vh;
+        min-height: 300px;
+      }
+  
+      .map-section p {
+        text-align: center;
+        font-size: 1.2rem;
+      }
+  
+      .form-section form {
+        width: 100vw;
+        height: auto;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        box-sizing: border-box;
+      }
+  
+      .form {
+        width: 80vw;
+        max-width: 1200px;
+        height: 40px;
+        border: 0;
+        border-bottom: 1px solid #ccc;
+        background-color: #FFFBF2;
+        box-sizing: border-box;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        color: #737373;
+      }
+  
+      input::placeholder {
+        font-family: "Mozilla Text", "inter", system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        color: #737373;
+        font-size: auto;
+      }
+  
+      select {
+        width: 100%;
+        padding: 0 0.4rem;
+        font-family: "Mozilla Text", "inter", system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        border: 1px solid #ccc;
+  
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+  
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='8' viewBox='0 0 14 8' fill='none' stroke='%23737373' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M1 1l6 6 6-6'/></svg>");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 14px;
+      }
+  
+      .submit {
+        width: 10rem;
+        height: 3rem;
+        background-color: #FFFBF2;
+        color: black;
+        border: 0;
+        border-bottom: 1px solid #ccc;
+        font-family: "Mozilla Text", "inter", system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      }
+  
+      .submit:hover {
+        background-color: #eee;
+      }
+  
+      .status-message {
+        text-align: center;
+        font-family: system-ui, sans-serif;
+        margin-top: 10px;
+        font-size: 1rem;
+        opacity: 0;
+        transition: opacity 0.4s ease;
+      }
+  
+      .status-message.show {
+        opacity: 1;
+      }
+  
+      .status-message.success {
+        color: green;
+      }
+  
+      .status-message.error {
+        color: red;
+      }
+  
+      .hidden {
+        position: absolute;
+        width: 1px; 
+        height: 1px; 
+        padding: 0; 
+        margin: -1px; 
+        overflow: hidden; 
+        clip: rect(0,0,0,0); 
+        white-space: nowrap; 
+        border: 0;
+      }
+    </style>
+  </head>
+  <body>
+    
+    <header>
+      <section class="hero" id="hero">
+        <h1 class="hidden">Saigon Art Map</h1>
+        <img src="logsam.svg" class="logo" alt="Saigon Art Map Logo"/>
+        <div class="scroll-hint" id="scrollHint">
+          <div class="mouse"></div>
+          <p>Scroll down</p>
+        </div>
+      </section>
+    </header>
+  
+    <main>
+      <section class="map-section" id="map-section">
+        <h2 class="texth1">Our Map</h2>
+        <div id="map" width="100%"></div>
+      </section>
+  
+      <section class="about-section" id="about">
+        <h2 class="texth1">About Saigon Art Map</h2>
+        <p class="textp about">Art is a way for humans to express their creativity, and for tens of thousands of millenia, art has evolved in unimaginable ways. Saigon Art Map is a collective map of all things art in Ho Chi Minh, wether it be Art Galleries, Art Shops, Museums, Venues, Halls or anything else, you name it. This project was started by Mai Do in 2016, and it continues to grow as a massive collection of art addresses. Mai imagines a day where Saigon Art Map is a massive online network, as well as physical hard copies, which can be used to explore the history and culture of this city.</p>
+        <br>
+        <p class="textp about">Nghệ thuật cho thấy sự tiến hóa trong tư duy thẩm mỹ, sức sống với khát vọng tự do nội tâm của con người. Vậy làm thế nào để có được một hình dung khái lược, nhanh chóng  và thú vị về sức sống ấy ở một nơi chốn rộng lớn như Sài Gòn – Thành phố Hồ Chí Minh? Câu trả lời thú vị nhất chính là một bản đồ nghệ thuật thị giác của thành phố này. Một ngày gần đây nhất, hình ảnh và thông tin về nơi chốn của bạn sẽ hiện diện trên các phiên bản trực tuyến (online) và bản in (hard copy) của Saigon Art Map, cho thấy tình yêu nghệ thuật và sức sống tinh thần của riêng bạn, của cả thành phố này!  Đây là dự án mình đã khởi xướng từ 2016, qua nhiều thời gian nhiều thay đổi chúng mình muốn trở lại với các bạn. Cho mình phương án thực thi hiệu quả nhất.<br><br>- Mai Do, founder</p>
+      </section>
+    
+      <section class="form-section" id="form">
+        <form id="artForm">
+          <h2 class="texth1">Not on here? Fill this form!</h2>
+          <p>It will take a few days to add your art site on the map!</p>
+          <div class="gname formdiv">
+            <label for="gname" class="texth2">Art Space Name:</label><br>
+            <input type="text" id="gname" name="gname" class="form" placeholder=" My Gallery" required>
+         </div>
+         <br>
+         <div class="address formdiv">
+            <label for="address" class="texth2">Address:</label><br>
+            <input type="text" id="address" name="address" class="form" placeholder=" 7 Công trường Lam Sơn, phường Sài Gòn, TP. HCM" required><br><br>
+         </div>
+         <div class="govname formdiv">
+            <label for="govname" class="texth2">Full Name:</label><br>
+            <input type="text" id="govname" name="govname" class="form" placeholder=" John Smith" required><br><br>
+         </div>
+         <div class="email formdiv">
+            <label for="email" class="texth2">Email Address:</label><br>
+            <input type="email" id="email" name="email" class="form" placeholder=" email@example.com" required><br><br>
+         </div>
+         <div class="phonenum formdiv">
+            <label for="phonenum" class="texth2">Phone Number:</label><br>
+            <input type="tel" id="phonenum" name="phonenum" class="form" placeholder=" +84 1234567890" required><br><br>
+         </div>
+         <div>
+            <label for="website" class="texth2">Website:</label><br>
+            <input type="url" id="website" name="website" class="form" placeholder="https://example.com"><br><br>
+         </div>
+         <div class="typeofplace formdiv">
+            <label for="typeofplace" class="texth2">Type:</label><br>
+            <select type="text" id="typeofplace" name="typeofplace" class="form" required>
+                <option value="" selected disabled>~ Select an Option ~</option>
+                <option value="gallery">Gallery</option>
+                <option value="cafe">Café</option>
+                <option value="museum">Museum</option>
+                <option value="studio">Studio</option>
+                <option value="other">Other</option>
+            </select>
+            <br><br>
+         </div>
+         <div class="details formdiv">
+            <label for="details" class="texth2">Additional Details:</label><br>
+            <input type="text" id="details" name="details" class="form" placeholder=" Please call first to book before visiting"><br><br>
+         </div>
+         <br><br>
+         <div class="cf-turnstile" data-sitekey="0x4AAAAAACAHkbz9wVj7WVoe"></div>
+         <br><br>
+         <button type="submit" class="submit">Submit</button>
+         <br>
+        </form>
+        <p id="form-status" class="status-message"></p>
+        <br><br>
+        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async></script>
+        <script>
+          document.addEventListener("DOMContentLoaded", () => {
+            const form = document.getElementById('artForm');
+            form.addEventListener('submit', async e => {
+              e.preventDefault();
+          
+              const status = document.getElementById('form-status');
+              status.textContent = 'Submitting...';
+              status.className = 'status-message show';
+          
+              const token = window.turnstile.getResponse();
+              if (!token) {
+                status.textContent = 'Please complete the CAPTCHA.';
+                return;
+              }
+
+              const data = {
+                gname: form.gname.value,
+                address: form.address.value,
+                govname: form.govname.value,
+                email: form.email.value,
+                phonenum: form.phonenum.value,
+                website: form.website.value,
+                typeofplace: form['typeofplace'].value,
+                details: form.details.value,
+                'cf-turnstile-response': token
+              };
+          
+              const params = new URLSearchParams();
+              for (const key in data) {
+                params.append(key, data[key]);
+              }
+          
+              try {
+                const response = await fetch('https://cors-proxy.qs5q9nxh8d.workers.dev/', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                  body: params.toString()
+                });
+              
+                const responseText = await response.text();
+                console.log('Response status:', response.status);
+                console.log('Response text:', responseText);
+              
+                if (response.ok) {
+                  status.textContent = '✅ Submitted successfully!';
+                  status.classList.add('success');
+                  form.reset();
+                } else {
+                  status.textContent = '❌ Error: ' + responseText;
+                  status.classList.add('error');
+                }
+              } catch (err) {
+                console.error('Fetch error:', err);
+                status.textContent = '❌ Network error: ' + err.message;
+                status.classList.add('error');
+              }
+            });
+          });
+        </script>
+      </section>
+    </main>
+  
+    <footer>
+      <section class="footer-section" id="footer">
+        <h2 class="texth1">Contact Us</h2>
+        <a class="contact" href="mailto:saigonartmap@gmail.com">Email: saigonartmap@gmail.com</a>
+        <a class="contact" href="https://www.facebook.com/artmap.saigon.10">Facebook: @artmap.saigon.10</a>
+        <a class="contact" href="https://www.facebook.com/saigonartmap">Facebook fanpage: @saigonartmap</a>
+        <br><br><br><br>
+    </footer>
+    
+    <script type="module">
+      import { Protocol } from 'https://unpkg.com/pmtiles@3.0.3/dist/index.js';
+  
+      document.addEventListener("DOMContentLoaded", async () => {
+        // Register PMTiles protocol
+        let protocol = new Protocol();
+        maplibregl.addProtocol("pmtiles", protocol.tile);
+  
+        const map = new maplibregl.Map({
+          container: 'map',
+          style: 'https://tiles.openfreemap.org/styles/liberty',
+          center: [106.7009, 10.7769],
+          zoom: 8
+        });
+  
+        map.addControl(new maplibregl.NavigationControl());
+  
+        // --- HCMC Boundary GeoJSON ---
+        const overlayData = {
+          "type": "FeatureCollection",
+          "features": [{
+            "type": "Feature",
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [[
+                [106.4, 10.4], [107.0, 10.4], [107.0, 11.2], [106.4, 11.2], [106.4, 10.4]
+              ]]
+            }
+          }]
+        };
+  
+        // --- Regions ---
+        const regions = [
+          { name: "Thủ Dầu Một", coords: [106.6519, 10.9804], zoom: 13, pmtiles: "thudaumot.pmtiles" },
+          { name: "Sài Gòn", coords: [106.7009, 10.7769], zoom: 12, pmtiles: "saigon.pmtiles" },
+          { name: "Vũng Tàu", coords: [107.1362, 10.4114], zoom: 13, pmtiles: "vungtau.pmtiles" }
+        ];
+  
+        let currentRegion = null;
+        let cityLayerId = "cityLabels";
+        let cityClickLayerId = "cityClickLayer";
+  
+        // --- Back button ---
+        const backBtn = document.createElement("div");
+        backBtn.style.position = "absolute";
+        backBtn.style.top = "10px";
+        backBtn.style.right = "10px";
+        backBtn.style.padding = "8px 12px";
+        backBtn.style.background = "white";
+        backBtn.style.borderRadius = "4px";
+        backBtn.style.cursor = "pointer";
+        backBtn.style.fontWeight = "600";
+        backBtn.style.boxShadow = "0 2px 4px rgba(0,0,0,0.2)";
+        backBtn.style.zIndex = "1000";
+        backBtn.innerText = "← Back";
+        backBtn.style.display = "none";
+        backBtn.onclick = closeRegion;
+        document.body.appendChild(backBtn);
+  
+        map.on('load', () => {
+          // Add HCMC overlay
+          map.addSource('hcmcOverlay', { 
+            type: 'geojson', 
+            data: overlayData 
+          });
+          
+          map.addLayer({
+            id: 'hcmcOverlayLayer',
+            type: 'fill',
+            source: 'hcmcOverlay',
+            paint: {
+              'fill-color': '#22c55e',
+              'fill-opacity': 0.1
+            }
+          });
+          
+          map.addLayer({
+            id: 'hcmcOverlayOutline',
+            type: 'line',
+            source: 'hcmcOverlay',
+            paint: {
+              'line-color': '#22c55e',
+              'line-width': 2
+            }
+          });
+  
+          // Add city markers
+          map.addSource(cityLayerId, {
+            type: 'geojson',
+            data: {
+              type: 'FeatureCollection',
+              features: regions.map(r => ({
+                type: 'Feature',
+                geometry: { type: 'Point', coordinates: r.coords },
+                properties: { name: r.name }
+              }))
+            }
+          });
+  
+          // City labels
+          map.addLayer({
+            id: cityLayerId,
+            type: 'symbol',
+            source: cityLayerId,
+            layout: {
+              'text-field': ['get', 'name'],
+              'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
+              'text-size': 16,
+              'text-offset': [0, 1.5],
+              'text-anchor': 'top'
+            },
+            paint: {
+              'text-color': '#2563eb',
+              'text-halo-color': '#ffffff',
+              'text-halo-width': 2
+            }
+          });
+  
+          // Clickable area
+          map.addLayer({
+            id: cityClickLayerId,
+            type: 'circle',
+            source: cityLayerId,
+            paint: { 
+              'circle-radius': 20, 
+              'circle-color': 'rgba(0,0,0,0)' 
+            }
+          });
+  
+          // Click handler
+          map.on('click', cityClickLayerId, e => {
+            const feature = e.features[0];
+            const region = regions.find(r => r.name === feature.properties.name);
+            if (region) openRegion(region);
+          });
+  
+          // Cursor changes
+          map.on('mouseenter', cityClickLayerId, () => {
+            map.getCanvas().style.cursor = 'pointer';
+          });
+  
+          map.on('mouseleave', cityClickLayerId, () => {
+            map.getCanvas().style.cursor = '';
+          });
+        });
+  
+        async function openRegion(region) {
+          backBtn.style.display = "block";
+          currentRegion = region;
+  
+          // Hide city markers
+          map.setLayoutProperty(cityLayerId, 'visibility', 'none');
+          map.setLayoutProperty(cityClickLayerId, 'visibility', 'none');
+  
+          // Fly to region
+          map.flyTo({ center: region.coords, zoom: region.zoom, duration: 1500 });
+  
+          // Remove old region layers if switching regions
+          const oldSourceId = 'regionMarkers';
+          const oldLayerId = 'regionMarkersLayer';
+          
+          if (map.getLayer(oldLayerId)) {
+            map.removeLayer(oldLayerId);
+          }
+          if (map.getSource(oldSourceId)) {
+            map.removeSource(oldSourceId);
+          }
+  
+          // Add new region source and layer
+          const sourceId = `region-${region.name}`;
+          const layerId = `layer-${region.name}`;
+  
+          if (!map.getSource(sourceId)) {
+            map.addSource(sourceId, {
+              type: "vector",
+              url: `pmtiles://${region.pmtiles}`,
+              maxzoom: 14
+            });
+          }
+  
+          if (!map.getLayer(layerId)) {
+            map.addLayer({
+              id: layerId,
+              type: 'symbol',
+              source: sourceId,
+              'source-layer': 'markers',
+              layout: {
+                'icon-image': ['get', 'icon'],
+                'icon-size': 0.8,
+                'icon-allow-overlap': true,
+                'text-field': ['get', 'name'],
+                'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
+                'text-size': 12,
+                'text-offset': [0, 1.2],
+                'text-anchor': 'top'
+              },
+              paint: {
+                'text-color': '#1f2937',
+                'text-halo-color': '#ffffff',
+                'text-halo-width': 1.5
+              }
+            });
+  
+            // Popup on click
+            map.on('click', layerId, (e) => {
+              const props = e.features[0].properties;
+              new maplibregl.Popup()
+                .setLngLat(e.lngLat)
+                .setHTML(`
+                  <div style="font-family: system-ui, sans-serif;">
+                    <b style="font-size: 14px;">${props.name || 'Location'}</b><br>
+                    ${props.description ? props.description + "<br>" : ""}
+                    ${props.address ? props.address + "<br>" : ""}
+                    ${props.phone ? "📞 " + props.phone + "<br>" : ""}
+                    ${props.email ? '✉️ <a href="mailto:' + props.email + '">' + props.email + '</a><br>' : ''}
+                    ${props.website ? '<a href="' + props.website + '" target="_blank">Visit website</a>' : ''}
+                  </div>
+                `)
+                .addTo(map);
+            });
+  
+            map.on('mouseenter', layerId, () => {
+              map.getCanvas().style.cursor = 'pointer';
+            });
+  
+            map.on('mouseleave', layerId, () => {
+              map.getCanvas().style.cursor = '';
+            });
+          }
+        }
+  
+        function closeRegion() {
+          backBtn.style.display = "none";
+          currentRegion = null;
+          
+          // Show city markers
+          map.setLayoutProperty(cityLayerId, 'visibility', 'visible');
+          map.setLayoutProperty(cityClickLayerId, 'visibility', 'visible');
+          
+          // Fly back to overview
+          map.flyTo({ 
+            center: [106.7009, 10.7769], 
+            zoom: 8,
+            duration: 1500 
+          });
+        }
+      });
+    </script>
+    
+    <!-- <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const map = L.map("map").setView([10.7769, 106.7009], 8);
+        
+        L.maplibreGL({
+          style: 'https://tiles.openfreemap.org/styles/liberty',
+        }).addTo(map);
+      
+        fetch(`hcmc.geojson`)
+          .then(res => res.json())
+          .then(data => {
+            L.geoJSON(data, {
+              style: {color: "green", weight: 3, fill: true, fillOpacity: 0.1}
+            }).addTo(map);
+          });
+      
+        const regions = [
+          { name: "Thủ Dầu Một", coords: [10.9804, 106.6519], zoom: 11, file: "thudaumot.geojson" },
+          { name: "Sài Gòn", coords: [10.7769, 106.7009], zoom: 11, file: "saigon.geojson" },
+          { name: "Vũng Tàu", coords: [10.4114, 107.1362], zoom: 11, file: "vungtau.geojson" }
+        ];
+      
+        const regionMarkers = L.layerGroup().addTo(map);
+        const placeMarkers = L.layerGroup().addTo(map);
+      
+        const icons = {
+          gallery: L.icon({ iconUrl: 'markers/galleries.svg', iconSize: [40,40], popupAnchor: [0,-25] }),
+          cafe: L.icon({ iconUrl: 'markers/cafes.svg', iconSize: [40,40], popupAnchor: [0,-25] }),
+          museum: L.icon({ iconUrl: 'markers/museums.svg', iconSize: [40,40], popupAnchor: [0,-25] }),
+          studio: L.icon({ iconUrl: 'markers/studios.svg', iconSize: [40,40], popupAnchor: [0,-25] }),
+          default: L.icon({ iconUrl: 'markers/others.svg', iconSize: [40,40], popupAnchor: [0,-25] })
+        };
+      
+        function renderRegionMarkers() {
+          regionMarkers.clearLayers();
+          regions.forEach(region => {
+            const m = L.marker(region.coords).addTo(regionMarkers);
+            m.bindTooltip(region.name, { permanent: true, direction: "top", offset: [0, -10] });
+            m.on("click", () => openRegion(region));
+          });
+        }
+      
+        renderRegionMarkers();
+      
+        const backBtn = L.control({ position: "topright" });
+        backBtn.onAdd = function () {
+          const div = L.DomUtil.create("div", "leaflet-bar leaflet-control leaflet-control-custom");
+          div.innerHTML = "← Back";
+          div.style.cursor = "pointer";
+          div.style.background = "white";
+          div.style.padding = "6px 10px";
+          div.style.borderRadius = "4px";
+          div.style.fontWeight = "600";
+          div.style.display = "none";
+          div.onclick = closeRegion;
+          return div;
+        };
+        backBtn.addTo(map);
+        const backButtonEl = document.querySelector(".leaflet-control-custom");
+      
+        function openRegion(region) {
+          regionMarkers.clearLayers();
+          backButtonEl.style.display = "block";
+          map.setView(region.coords, region.zoom);
+      
+          fetch(region.file)
+            .then(res => res.json())
+            .then(data => {
+              placeMarkers.clearLayers();
+              
+              const tempLayer = L.geoJSON(data, {
+                pointToLayer: function(feature, latlng) {
+                  const iconType = feature.properties.type ? feature.properties.type.toLowerCase() : 'default';
+                  const markerIcon = icons[iconType] || icons.default;
+                  return L.marker(latlng, { icon: markerIcon });
+                },
+                onEachFeature: function(feature, layer) {
+                  const props = feature.properties;
+                  let popupHtml = `<b>${props.name}</b><br>`;
+                  popupHtml += props.description ? props.description + "<br>" : "";
+                  popupHtml += props.address ? props.address + "<br>" : "";
+                  popupHtml += props.phone ? "📞 " + props.phone + "<br>" : "";
+                  popupHtml += props.email ? '✉️ <a href="mailto:' + props.email + '">' + props.email + "</a><br>" : "";
+                  popupHtml += props.website ? '<a href="' + props.website + '" target="_blank">Visit website</a>' : "";
+                  layer.bindPopup(popupHtml);
+                }
+              })
+              tempLayer.addTo(placeMarkers);
+            })
+            .catch(err => console.error("Error loading regional markers:", err));
+        }
+      
+        function closeRegion() {
+          placeMarkers.clearLayers();
+          renderRegionMarkers();
+          backButtonEl.style.display = "none";
+          map.setView([10.7769, 106.7009], 8);
+        }
+      });
+    </script> -->
+  </body>
+</html>
