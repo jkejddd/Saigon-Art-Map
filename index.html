@@ -488,19 +488,27 @@
         // --- Overlay example ---
         const overlayData = await fetch('hcmc.geojson').then(res => res.json());
         map.on('load', () => {
-          // Load custom marker icons
-          const markerTypes = ['galleries', 'museums', 'studios', 'cafes', 'others'];
-          let loadedIcons = 0;
+          // Load custom marker icons - mapping singular type values to plural icon filenames
+          const iconMappings = {
+            'gallery': 'galleries',
+            'cafe': 'cafes', 
+            'museum': 'museums',
+            'studio': 'studios',
+            'other': 'others'
+          };
           
-          markerTypes.forEach(type => {
-            map.loadImage(`/markers/${type}.svg`, (error, image) => {
+          let loadedIcons = 0;
+          const totalIcons = Object.keys(iconMappings).length;
+          
+          Object.entries(iconMappings).forEach(([typeName, iconFile]) => {
+            map.loadImage(`/markers/${iconFile}.svg`, (error, image) => {
               if (error) {
-                console.error(`Error loading ${type} icon:`, error);
+                console.error(`Error loading ${iconFile} icon:`, error);
                 return;
               }
-              map.addImage(type, image);
+              map.addImage(typeName, image);
               loadedIcons++;
-              console.log(`Loaded icon: ${type} (${loadedIcons}/${markerTypes.length})`);
+              console.log(`Loaded icon: ${typeName} -> ${iconFile}.svg (${loadedIcons}/${totalIcons})`);
             });
           });
           
@@ -527,9 +535,9 @@
   
         // --- Regions ---
         const regions = [
-          { name: "Thủ Dầu Một", coords: [106.6519, 10.9804], zoom: 11, pmtiles: "thudaumot.pmtiles" },
-          { name: "Sài Gòn", coords: [106.7009, 10.7769], zoom: 11, pmtiles: "saigon.pmtiles" },
-          { name: "Vũng Tàu", coords: [107.1362, 10.4114], zoom: 11, pmtiles: "vungtau.pmtiles" }
+          { name: "Thủ Dầu Một", coords: [106.6519, 10.9804], zoom: 11, pmtiles: "thudaumot.pmtiles", layer: "thudaumot" },
+          { name: "Sài Gòn", coords: [106.7009, 10.7769], zoom: 11, pmtiles: "saigon.pmtiles", layer: "saigon" },
+          { name: "Vũng Tàu", coords: [107.1362, 10.4114], zoom: 11, pmtiles: "vungtau.pmtiles", layer: "vungtau" }
         ];
   
         let cityLayerId = "cityLabels";
@@ -619,74 +627,60 @@
               // Wait for source to load before adding layer
               map.once('sourcedata', (e) => {
                 if (e.sourceId === regionSourceId && e.isSourceLoaded) {
-                  console.log('Source loaded, checking layers...');
+                  console.log('Source loaded, adding layer with source-layer:', region.layer);
                   
-                  // Query to find available source layers
-                  setTimeout(() => {
-                    const allFeatures = map.querySourceFeatures(regionSourceId);
-                    console.log('Total features found:', allFeatures.length);
+                  try {
+                    map.addLayer({
+                      id: regionLayerId,
+                      type: 'symbol',
+                      source: regionSourceId,
+                      'source-layer': region.layer,
+                      layout: {
+                        'icon-image': ['get', 'type'],
+                        'icon-size': 1,
+                        'icon-allow-overlap': true,
+                        'text-field': ['get', 'name'],
+                        'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
+                        'text-size': 14,
+                        'text-offset': [0, 1.2],
+                        'text-anchor': 'top',
+                        'text-allow-overlap': true
+                      },
+                      paint: {
+                        'text-color': '#1f2937',
+                        'text-halo-color': '#ffffff',
+                        'text-halo-width': 1.5
+                      }
+                    });
                     
-                    if (allFeatures.length > 0) {
-                      const sourceLayers = [...new Set(allFeatures.map(f => f.sourceLayer))];
-                      console.log('Available source layers:', sourceLayers);
-                      console.log('First feature sample:', allFeatures[0]);
-                      
-                      // Use the first available source layer
-                      const actualSourceLayer = sourceLayers[0];
-                      
-                      console.log('Adding layer with source-layer:', actualSourceLayer);
-                      
-                      map.addLayer({
-                        id: regionLayerId,
-                        type: 'symbol',
-                        source: regionSourceId,
-                        'source-layer': actualSourceLayer,
-                        layout: {
-                          'icon-image': [
-                            'concat',
-                            ['get', 'type'],
-                            's'
-                          ],
-                          'icon-size': 0.8,
-                          'icon-allow-overlap': true,
-                          'text-field': ['get', 'name'],
-                          'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
-                          'text-size': 14,
-                          'text-offset': [0, 1.2],
-                          'text-anchor': 'top',
-                          'text-allow-overlap': true
-                        }
-                      });
-                      
-                      console.log('Layer added successfully');
+                    console.log('Layer added successfully');
   
-                      map.on('click', regionLayerId, (e) => {
-                        console.log('Marker clicked:', e.features[0].properties);
-                        const props = e.features[0].properties;
-                        new maplibregl.Popup()
-                          .setLngLat(e.lngLat)
-                          .setHTML(`
-                            <b>${props.name}</b><br>
-                            ${props.description}<br>
-                            ${props.address ? props.address + "<br>" : ""}
-                            ${props.phone ? "📞 " + props.phone + "<br>" : ""}
-                            ${props.email ? '✉️ <a href="mailto:' + props.email + '">' + props.email + '</a><br>' : ''}
-                            ${props.website ? '<a href="' + props.website + '" target="_blank">Visit website</a>' : ''}
-                          `)
-                          .addTo(map);
-                      });
+                    map.on('click', regionLayerId, (e) => {
+                      console.log('Marker clicked:', e.features[0].properties);
+                      const props = e.features[0].properties;
+                      new maplibregl.Popup()
+                        .setLngLat(e.lngLat)
+                        .setHTML(`
+                          <b>${props.name}</b><br>
+                          ${props.description || ''}<br>
+                          ${props.address ? props.address + "<br>" : ""}
+                          ${props.phone ? "📞 " + props.phone + "<br>" : ""}
+                          ${props.email ? '✉️ <a href="mailto:' + props.email + '">' + props.email + '</a><br>' : ''}
+                          ${props.website ? '<a href="' + props.website + '" target="_blank">Visit website</a>' : ''}
+                        `)
+                        .addTo(map);
+                    });
   
-                      map.on('mouseenter', regionLayerId, () => {
-                        map.getCanvas().style.cursor = 'pointer';
-                      });
+                    map.on('mouseenter', regionLayerId, () => {
+                      map.getCanvas().style.cursor = 'pointer';
+                    });
   
-                      map.on('mouseleave', regionLayerId, () => {
-                        map.getCanvas().style.cursor = '';
-                      });
-                    } else {
-                      console.error('No features found at current zoom level');
-                    }
-                  }, 500);
+                    map.on('mouseleave', regionLayerId, () => {
+                      map.getCanvas().style.cursor = '';
+                    });
+                  } catch (error) {
+                    console.error('Error adding layer:', error);
+                  }
                 }
               });
               
