@@ -427,7 +427,8 @@
         <br><br>
         <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async></script>
         <script>
-          import * as pmtiles from "https://unpkg.com/pmtiles@3.0.3/dist/index.js";
+          import * as pmtiles from "https://unpkg.com/pmtiles@4.3.0/dist/pmtiles.js";
+          console.log("✅ PMTiles imported:", pmtiles);
 
           document.addEventListener("DOMContentLoaded", async () => {
             // Register the pmtiles protocol globally for maplibre
