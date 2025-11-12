@@ -27,9 +27,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=Mozilla+Text&family=Roboto+Flex:opsz,wdth,wght,GRAD@8..144,44,415,80&display=swap" rel="stylesheet" media="print" onload="this.media='all'"> 
 
     <link rel="preconnect" href="https://unpkg.com" crossorigin/>
-    <link href="https://unpkg.com/maplibre-gl@^5.12.0/dist/maplibre-gl.css" rel="stylesheet" media="print" onload="this.media='all'"/>
+    <link href="https://unpkg.com/maplibre-gl@^5.12.0/dist/maplibre-gl.css" rel="stylesheet"/>
     <script src="https://unpkg.com/maplibre-gl@^5.12.0/dist/maplibre-gl.js"></script>
-    <script src="https://unpkg.com/@protomaps/pmtiles@4.3.0/dist/pmtiles.js"></script>
     
     <style>
       html, body, .hcmctext {
@@ -343,6 +342,37 @@
         display: none;
         z-index: 10;
       }
+      .region-pin {
+        width: 20px;
+        height: 20px;
+        background: orange;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        box-shadow: 0 0 0 1px rgba(0,0,0,0.15);
+        cursor: pointer;
+      }
+      /* Back and 3D toggle buttons */
+      .map-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 6px 10px;
+        font-weight: 600;
+        cursor: pointer;
+        z-index: 10;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      }
+      
+      #toggle3D { right: 90px; }
+
+      .map-wrapper {
+        position: relative;
+        width: 100%;
+        display: flex;
+        justify-content: center;
     </style>
   </head>
   <body>
@@ -361,8 +391,9 @@
     <main>
       <section class="map-section" id="map-section">
         <h2 class="texth1">Our Map</h2>
-        <div id="map" width="100%"></div>
-        <div id="backBtn">← Back</div>
+        <div id="map"></div>
+        <button id="backBtn" class="map-button">← Back</button>
+        <button id="toggle3D" class="map-button">Enable 3D</button>
       </section>
   
       <section class="about-section" id="about">
@@ -508,25 +539,25 @@
     
     <script type="module">
       import * as pmtiles from "https://unpkg.com/pmtiles@4.3.0/dist/pmtiles.js";
-      
-      document.addEventListener("DOMContentLoaded", async () => {
-        // Register PMTiles protocol
-        const protocol = new pmtiles.Protocol();
-        maplibregl.addProtocol("pmtiles", protocol.tile);
-      
-        // Initialize map
-        const map = new maplibregl.Map({
-          container: "map",
-          style: "https://tiles.openfreemap.org/styles/liberty",
-          center: [106.7009, 10.7769], // Ho Chi Minh City
-          zoom: 8
-        });
-      
-        map.addControl(new maplibregl.NavigationControl());
-      
-        // Load overlay (city boundary)
-        const overlayData = await fetch("hcmc.geojson").then(res => res.json());
-        map.on("load", () => {
+    
+      // Register PMTiles protocol
+      const protocol = new pmtiles.Protocol();
+      maplibregl.addProtocol("pmtiles", protocol.tile);
+    
+      // Initialize map (HCMC, zoom 8)
+      const map = new maplibregl.Map({
+        container: "map",
+        style: "https://tiles.openfreemap.org/styles/liberty",
+        center: [106.7009, 10.7769],
+        zoom: 8
+      });
+      map.addControl(new maplibregl.NavigationControl());
+    
+      // Load overlay and base assets once the style is ready
+      map.on("load", async () => {
+        // 1) City overlay: fill 0.1 green + 1.5 outline
+        try {
+          const overlayData = await fetch("hcmc.geojson").then(r => r.json());
           map.addSource("hcmcOverlay", { type: "geojson", data: overlayData });
           map.addLayer({
             id: "hcmcOverlayFill",
@@ -540,109 +571,150 @@
             source: "hcmcOverlay",
             paint: { "line-color": "green", "line-width": 1.5 }
           });
-      
-          // Load icons for galleries, cafes, etc.
-          const iconNames = ["gallery", "cafe", "museum", "studio", "other"];
-          iconNames.forEach(icon => {
-            map.loadImage(`/markers/${icon}.svg`, (error, image) => {
-              if (error) return console.error("Icon load error:", icon, error);
-              map.addImage(icon, image);
+        } catch (e) {
+          console.error("Failed to load hcmc.geojson", e);
+        }
+    
+        const iconMap = {
+          gallery: "/markers/gallery.svg",
+          museum: "/markers/museum.svg",
+          cafe:   "/markers/cafe.svg",
+          studio: "/markers/studio.svg",
+          other:  "/markers/other.svg"
+        };
+        for (const [name, url] of Object.entries(iconMap)) {
+          await new Promise((resolve) => {
+            map.loadImage(url, (err, img) => {
+              if (err) { console.error("Icon load error:", name, err); resolve(); return; }
+              if (!map.hasImage(name)) map.addImage(name, img, { pixelRatio: 2 });
+              resolve();
             });
           });
-      
-          // Define regions
-          const regions = [
-            { name: "Thủ Dầu Một", coords: [106.6519, 10.9804], zoom: 11, pmtiles: "thudaumot.pmtiles", layer: "thudaumot" },
-            { name: "Sài Gòn", coords: [106.7009, 10.7769], zoom: 11, pmtiles: "saigon.pmtiles", layer: "saigon" },
-            { name: "Vũng Tàu", coords: [107.1362, 10.4114], zoom: 11, pmtiles: "vungtau.pmtiles", layer: "vungtau" }
-          ];
-      
-          // Back button
-          const backBtn = document.getElementById("backBtn");
-      
-          let cityMarkers = [];
-          let currentRegion = null;
-      
-          function renderCityMarkers() {
-            cityMarkers.forEach(m => m.remove());
-            cityMarkers = [];
-            regions.forEach(region => {
-              const el = document.createElement("div");
-              el.className = "region-marker";
-              const marker = new maplibregl.Marker(el)
-                .setLngLat(region.coords)
-                .setPopup(new maplibregl.Popup({ offset: 25 }).setText(region.name))
-                .addTo(map);
-              marker.togglePopup();
-              el.addEventListener("click", () => openRegion(region));
-              cityMarkers.push(marker);
-            });
-          }
-      
+        }
+    
+        // 3) Regions: Thủ Dầu Một, Sài Gòn, Vũng Tàu
+        const regions = [
+          { name: "Thủ Dầu Một", coords: [106.6519, 10.9804], zoom: 11, pmtiles: "thudaumot.pmtiles", layer: "thudaumot" },
+          { name: "Sài Gòn",      coords: [106.7009, 10.7769], zoom: 11, pmtiles: "saigon.pmtiles",    layer: "saigon" },
+          { name: "Vũng Tàu",     coords: [107.1362, 10.4114], zoom: 11, pmtiles: "vungtau.pmtiles",   layer: "vungtau" }
+        ];
+    
+        const backBtn = document.getElementById("backBtn");
+        const toggle3D = document.getElementById("toggle3D");
+    
+        let cityMarkers = [];
+        function renderCityMarkers() {
+          cityMarkers.forEach(m => m.remove());
+          cityMarkers = [];
+    
+          regions.forEach(region => {
+            const el = document.createElement("div");
+            el.className = "region-pin";
+            const marker = new maplibregl.Marker(el)
+              .setLngLat(region.coords)
+              .setPopup(new maplibregl.Popup({ offset: 20 }).setText(region.name))
+              .addTo(map);
+            // keep name visible
+            marker.togglePopup();
+            el.addEventListener("click", () => openRegion(region));
+            cityMarkers.push(marker);
+          });
+        }
+        renderCityMarkers();
+    
+        // 4) Region open/close + PMTiles layer
+        async function openRegion(region) {
+          backBtn.style.display = "inline-block";
+          cityMarkers.forEach(m => m.remove());
+    
+          map.flyTo({ center: region.coords, zoom: region.zoom });
+    
+          // Remove previous
+          if (map.getLayer("regionLayer")) map.removeLayer("regionLayer");
+          if (map.getSource("regionSource")) map.removeSource("regionSource");
+    
+          // Add tiles
+          map.addSource("regionSource", {
+            type: "vector",
+            url: `pmtiles://${region.pmtiles}`
+          });
+    
+          map.addLayer({
+            id: "regionLayer",
+            type: "symbol",
+            source: "regionSource",
+            "source-layer": region.layer, // MUST match the layer name inside your PMTiles
+            layout: {
+              "icon-image": ["get", "type"],     // expects properties.type ∈ {gallery,museum,cafe,studio,other}
+              "icon-size": 1,
+              "text-field": ["get", "name"],
+              "text-size": 14,
+              "text-offset": [0, 1.2],
+              "text-anchor": "top"
+            },
+            paint: {
+              "text-color": "#1f2937",
+              "text-halo-color": "#fff",
+              "text-halo-width": 1.5
+            }
+          });
+    
+          // Popup with your formatting
+          map.on("click", "regionLayer", (e) => {
+            const p = e.features[0].properties;
+            new maplibregl.Popup()
+              .setLngLat(e.lngLat)
+              .setHTML(`
+                <b>${p.name || ""}</b><br>
+                ${(p.description || "").replace(/\n/g, "<br>")}<br>
+                ${p.address ? p.address + "<br>" : ""}
+                ${p.phone ? "📞 " + p.phone + "<br>" : ""}
+                ${p.email ? "✉️ <a href='mailto:${p.email}'>${p.email}</a><br>" : ""}
+                ${p.website ? "<a href='" + p.website + "' target='_blank'>Visit website</a>" : ""}
+              `)
+              .addTo(map);
+          });
+        }
+    
+        function closeRegion() {
+          backBtn.style.display = "none";
+          if (map.getLayer("regionLayer")) map.removeLayer("regionLayer");
+          if (map.getSource("regionSource")) map.removeSource("regionSource");
+          map.flyTo({ center: [106.7009, 10.7769], zoom: 8 });
           renderCityMarkers();
-      
-          async function openRegion(region) {
-            backBtn.style.display = "block";
-            cityMarkers.forEach(m => m.remove());
-            map.flyTo({ center: region.coords, zoom: region.zoom });
-      
-            // Remove old source/layer
-            if (map.getLayer("regionLayer")) map.removeLayer("regionLayer");
-            if (map.getSource("regionSource")) map.removeSource("regionSource");
-      
-            // Add PMTiles source
-            map.addSource("regionSource", {
-              type: "vector",
-              url: `pmtiles://${region.pmtiles}`
-            });
-      
-            map.addLayer({
-              id: "regionLayer",
-              type: "symbol",
-              source: "regionSource",
-              "source-layer": region.layer,
-              layout: {
-                "icon-image": ["get", "type"], // expects type property matching icon name
-                "icon-size": 1,
-                "text-field": ["get", "name"],
-                "text-size": 14,
-                "text-offset": [0, 1.2],
-                "text-anchor": "top"
-              },
-              paint: {
-                "text-color": "#1f2937",
-                "text-halo-color": "#fff",
-                "text-halo-width": 1.5
-              }
-            });
-      
-            // Popup on click
-            map.on("click", "regionLayer", e => {
-              const p = e.features[0].properties;
-              new maplibregl.Popup()
-                .setLngLat(e.lngLat)
-                .setHTML(`
-                  <b>${p.name}</b><br>
-                  ${(p.description || "").replace(/\n/g, "<br>")}<br>
-                  ${p.address ? p.address + "<br>" : ""}
-                  ${p.phone ? "📞 " + p.phone + "<br>" : ""}
-                  ${p.email ? "✉️ <a href='mailto:${p.email}'>${p.email}</a><br>" : ""}
-                  ${p.website ? "<a href='${p.website}' target='_blank'>Visit website</a>" : ""}
-                `)
-                .addTo(map);
-            });
-      
-            currentRegion = region;
+        }
+        backBtn.onclick = closeRegion;
+    
+        // 5) Optional: 3D buildings toggle (OpenFreeMap liberty style)
+        // liberty references openmaptiles buildings; extrusion works when present in style sources
+        let is3D = false;
+        // Add 3D layer hidden by default
+        // If your style uses source "openmaptiles" and layer "building"
+        map.addLayer({
+          id: "3d-buildings",
+          type: "fill-extrusion",
+          source: "openmaptiles",
+          "source-layer": "building",
+          paint: {
+            "fill-extrusion-color": "#aaa",
+            "fill-extrusion-height": ["get", "render_height"],
+            "fill-extrusion-base": ["get", "render_min_height"],
+            "fill-extrusion-opacity": 0.6
+          },
+          layout: { visibility: "none" }
+        }, "hcmcOverlayOutline"); // insert before outline if you prefer
+    
+        toggle3D.onclick = () => {
+          is3D = !is3D;
+          map.setLayoutProperty("3d-buildings", "visibility", is3D ? "visible" : "none");
+          toggle3D.textContent = is3D ? "Disable 3D" : "Enable 3D";
+          // Optional dramatic tilt when enabling 3D
+          if (is3D) {
+            map.easeTo({ pitch: 60, bearing: -20, duration: 1200 });
+          } else {
+            map.easeTo({ pitch: 0, bearing: 0, duration: 800 });
           }
-      
-          function closeRegion() {
-            backBtn.style.display = "none";
-            map.flyTo({ center: [106.7009, 10.7769], zoom: 8 });
-            renderCityMarkers();
-          }
-      
-          backBtn.onclick = closeRegion;
-        });
+        };
       });
     </script>
     
