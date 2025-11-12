@@ -602,7 +602,7 @@
           // Zoom in
           map.flyTo({ center: region.coords, zoom: region.zoom });
   
-          await loadPMTiles(map, region.pmtiles, region.name.replace(/\s+/g, '').toLowerCase());
+          await loadPMTiles(map, region.pmtiles).toLowerCase());
           backBtn.style.display = "block";
         }
   
