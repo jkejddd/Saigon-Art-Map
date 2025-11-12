@@ -579,6 +579,8 @@
   
         function openRegion(region) {
           console.log('Opening region:', region.name);
+          
+          // Show back button immediately
           backBtn.style.display = "block";
   
           // Hide city markers while region is open
@@ -597,7 +599,10 @@
   
           currentRegion = region;
   
-          // Load region PMTiles first, then fly
+          // Fly to region first
+          map.flyTo({ center: region.coords, zoom: region.zoom });
+  
+          // Load region PMTiles after starting the fly
           if (!map.getSource(regionSourceId)) {
             console.log('Adding source:', regionSourceId, 'from', region.pmtiles);
             
@@ -611,80 +616,82 @@
               
               console.log('Source added successfully');
   
-              console.log('Adding layer:', regionLayerId);
-              
-              map.addLayer({
-                id: regionLayerId,
-                type: 'symbol',
-                source: regionSourceId,
-                'source-layer': 'markers', // change if your PMTiles vector layer name differs
-                layout: {
-                  'icon-image': [
-                    'concat',
-                    ['get', 'type'],
-                    's'  // Converts 'gallery' to 'galleries', 'museum' to 'museums', etc.
-                  ],
-                  'icon-size': 0.8,
-                  'icon-allow-overlap': true,
-                  'text-field': ['get', 'name'],
-                  'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
-                  'text-size': 14,
-                  'text-offset': [0, 1.2],
-                  'text-anchor': 'top',
-                  'text-allow-overlap': true
+              // Wait for source to load before adding layer
+              map.once('sourcedata', (e) => {
+                if (e.sourceId === regionSourceId && e.isSourceLoaded) {
+                  console.log('Source loaded, checking layers...');
+                  
+                  // Query to find available source layers
+                  setTimeout(() => {
+                    const allFeatures = map.querySourceFeatures(regionSourceId);
+                    console.log('Total features found:', allFeatures.length);
+                    
+                    if (allFeatures.length > 0) {
+                      const sourceLayers = [...new Set(allFeatures.map(f => f.sourceLayer))];
+                      console.log('Available source layers:', sourceLayers);
+                      console.log('First feature sample:', allFeatures[0]);
+                      
+                      // Use the first available source layer
+                      const actualSourceLayer = sourceLayers[0];
+                      
+                      console.log('Adding layer with source-layer:', actualSourceLayer);
+                      
+                      map.addLayer({
+                        id: regionLayerId,
+                        type: 'symbol',
+                        source: regionSourceId,
+                        'source-layer': actualSourceLayer,
+                        layout: {
+                          'icon-image': [
+                            'concat',
+                            ['get', 'type'],
+                            's'
+                          ],
+                          'icon-size': 0.8,
+                          'icon-allow-overlap': true,
+                          'text-field': ['get', 'name'],
+                          'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
+                          'text-size': 14,
+                          'text-offset': [0, 1.2],
+                          'text-anchor': 'top',
+                          'text-allow-overlap': true
+                        }
+                      });
+                      
+                      console.log('Layer added successfully');
+  
+                      map.on('click', regionLayerId, (e) => {
+                        console.log('Marker clicked:', e.features[0].properties);
+                        const props = e.features[0].properties;
+                        new maplibregl.Popup()
+                          .setLngLat(e.lngLat)
+                          .setHTML(`
+                            <b>${props.name}</b><br>
+                            ${props.description}<br>
+                            ${props.address ? props.address + "<br>" : ""}
+                            ${props.phone ? "📞 " + props.phone + "<br>" : ""}
+                            ${props.email ? '✉️ <a href="mailto:' + props.email + '">' + props.email + '</a><br>' : ''}
+                            ${props.website ? '<a href="' + props.website + '" target="_blank">Visit website</a>' : ''}
+                          `)
+                          .addTo(map);
+                      });
+  
+                      map.on('mouseenter', regionLayerId, () => {
+                        map.getCanvas().style.cursor = 'pointer';
+                      });
+  
+                      map.on('mouseleave', regionLayerId, () => {
+                        map.getCanvas().style.cursor = '';
+                      });
+                    } else {
+                      console.error('No features found at current zoom level');
+                    }
+                  }, 500);
                 }
-              });
-              
-              console.log('Layer added successfully');
-  
-              map.on('click', regionLayerId, (e) => {
-                console.log('Marker clicked:', e.features[0].properties);
-                const props = e.features[0].properties;
-                new maplibregl.Popup()
-                  .setLngLat(e.lngLat)
-                  .setHTML(`
-                    <b>${props.name}</b><br>
-                    ${props.description}<br>
-                    ${props.address ? props.address + "<br>" : ""}
-                    ${props.phone ? "📞 " + props.phone + "<br>" : ""}
-                    ${props.email ? '✉️ <a href="mailto:' + props.email + '">' + props.email + '</a><br>' : ''}
-                    ${props.website ? '<a href="' + props.website + '" target="_blank">Visit website</a>' : ''}
-                  `)
-                  .addTo(map);
-              });
-  
-              map.on('mouseenter', regionLayerId, () => {
-                map.getCanvas().style.cursor = 'pointer';
-              });
-  
-              map.on('mouseleave', regionLayerId, () => {
-                map.getCanvas().style.cursor = '';
               });
               
               map.on('error', (e) => {
                 console.error('Map error:', e);
-              });
-              
-              map.on('sourcedata', (e) => {
-                if (e.sourceId === regionSourceId && e.isSourceLoaded) {
-                  console.log('Source loaded:', regionSourceId);
-                  
-                  // Check what layers exist in the source
-                  const source = map.getSource(regionSourceId);
-                  console.log('Source object:', source);
-                  
-                  // Try to query features
-                  setTimeout(() => {
-                    const features = map.querySourceFeatures(regionSourceId);
-                    console.log('Features found:', features.length);
-                    if (features.length > 0) {
-                      console.log('First feature:', features[0]);
-                      console.log('Source layers available:', [...new Set(features.map(f => f.sourceLayer))]);
-                    } else {
-                      console.log('No features found - might be wrong source-layer name or wrong zoom level');
-                    }
-                  }, 1000);
-                }
               });
               
             } catch (error) {
@@ -694,9 +701,6 @@
             console.log('Source already exists, making visible');
             map.setLayoutProperty(regionLayerId, 'visibility', 'visible');
           }
-          
-          // Fly to region
-          map.flyTo({ center: region.coords, zoom: region.zoom });
         }
   
         function closeRegion() {
