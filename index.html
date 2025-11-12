@@ -369,11 +369,15 @@
         padding: 6px 10px;
         font-weight: 600;
         cursor: pointer;
-        z-index: 10;
         box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        z-index: 1;
+        position: relative;
       }
       
-      #toggle3D { right: 90px; }
+      #toggle3D {
+        right: 90px;
+        z-index: 20;
+      }
 
       .map-wrapper {
         position: relative;
@@ -606,16 +610,11 @@
             cityMarkers = [];
       
             regions.forEach(region => {
-              const el = document.createElement("div");
-              el.className = "region-pin";
-              const marker = new maplibregl.Marker(el)
+              const marker = new maplibregl.Marker({ color: "orange" })
                 .setLngLat(region.coords)
                 .setPopup(new maplibregl.Popup({ offset: 20 }).setText(region.name))
                 .addTo(map);
-              // keep name visible
-              marker.togglePopup();
-              el.addEventListener("click", () => openRegion(region));
-              cityMarkers.push(marker);
+              marker.getElement().addEventListener("click", () => openRegion(region));
             });
           }
           renderCityMarkers();
