@@ -467,175 +467,152 @@
         <a class="contact" href="https://www.facebook.com/saigonartmap">Facebook fanpage: @saigonartmap</a>
         <br><br><br><br>
     </footer>
-    
-    <script type="module">
-    import { Protocol } from 'https://unpkg.com/pmtiles@3.0.3/dist/index.js';
-    
-    // Register PMTiles protocol BEFORE map creation
-    const protocol = new Protocol();
-    maplibregl.addProtocol("pmtiles", protocol.tile);
-    
-    document.addEventListener("DOMContentLoaded", async () => {
-      const map = new maplibregl.Map({
-        container: 'map',
-        style: 'https://tiles.openfreemap.org/styles/liberty',
-        center: [106.7009, 10.7769],
-        zoom: 8
+
+    <script>
+      import { Protocol } from 'https://unpkg.com/pmtiles@3.0.3/dist/index.js';
+      
+      const protocol = new Protocol();
+      maplibregl.addProtocol("pmtiles", protocol.tile);
+      
+      document.addEventListener("DOMContentLoaded", async () => {
+        const map = new maplibregl.Map({
+          container: 'map',
+          style: 'https://tiles.openfreemap.org/styles/liberty',
+          center: [106.7009, 10.7769],
+          zoom: 8
+        });
+      
+        map.addControl(new maplibregl.NavigationControl());
+      
+        const regions = [
+          { name: "Sài Gòn", coords: [106.7009, 10.7769], zoom: 11, pmtiles: "saigon.pmtiles", layer: "saigon" },
+          { name: "Thủ Dầu Một", coords: [106.6519, 10.9804], zoom: 11, pmtiles: "thudaumot.pmtiles", layer: "thudaumot" },
+          { name: "Vũng Tàu", coords: [107.1362, 10.4114], zoom: 11, pmtiles: "vungtau.pmtiles", layer: "vungtau" }
+        ];
+      
+        const backBtn = document.createElement("div");
+        backBtn.style.cssText = "position:absolute;top:10px;right:10px;padding:6px 10px;background:white;cursor:pointer;font-weight:600;display:none";
+        backBtn.innerText = "← Back";
+        backBtn.onclick = () => closeRegion();
+        document.body.appendChild(backBtn);
+      
+        let currentRegion = null;
+      
+        // --- Add city labels layer ---
+        map.on('load', async () => {
+          const cityGeoJSON = {
+            type: "FeatureCollection",
+            features: regions.map(r => ({
+              type: "Feature",
+              geometry: { type: "Point", coordinates: r.coords },
+              properties: { name: r.name }
+            }))
+          };
+      
+          map.addSource("cityLabels", { type: "geojson", data: cityGeoJSON });
+      
+          map.addLayer({
+            id: "cityLabelsLayer",
+            type: "symbol",
+            source: "cityLabels",
+            layout: {
+              "text-field": ["get","name"],
+              "text-font": ["Open Sans Bold","Arial Unicode MS Bold"],
+              "text-size": 14,
+              "text-anchor": "top",
+              "text-offset": [0,1.2],
+              "text-allow-overlap": true
+            },
+            paint: {
+              "text-color":"#1f2937",
+              "text-halo-color":"#fff",
+              "text-halo-width":1.5
+            }
+          });
+      
+          // Click on city label -> open region
+          map.on('click', 'cityLabelsLayer', (e) => {
+            const props = e.features[0].properties;
+            const region = regions.find(r => r.name === props.name);
+            if(region) openRegion(region);
+          });
+      
+          map.on('mouseenter', 'cityLabelsLayer', () => map.getCanvas().style.cursor = 'pointer');
+          map.on('mouseleave', 'cityLabelsLayer', () => map.getCanvas().style.cursor = '');
+        });
+      
+        // --- Load region PMTiles and show markers ---
+        async function openRegion(region) {
+          backBtn.style.display = "block";
+          currentRegion = region;
+      
+          // Hide city labels
+          map.setLayoutProperty("cityLabelsLayer","visibility","none");
+      
+          map.flyTo({ center: region.coords, zoom: region.zoom });
+      
+          // Remove previous region layer/source
+          if(map.getLayer("regionLayer")) map.removeLayer("regionLayer");
+          if(map.getSource("regionSource")) map.removeSource("regionSource");
+      
+          // Add PMTiles source
+          map.addSource("regionSource", {
+            type:"vector",
+            url:`pmtiles://${region.pmtiles}`,
+            minzoom:0,
+            maxzoom:14
+          });
+      
+          // Wait for source to load fully
+          map.once('sourcedata', (e) => {
+            if(e.sourceId === "regionSource" && e.isSourceLoaded) {
+              // Add symbol layer
+              map.addLayer({
+                id:"regionLayer",
+                type:"symbol",
+                source:"regionSource",
+                "source-layer": region.layer,
+                layout:{
+                  "icon-image":["get","type"], 
+                  "icon-size":1,
+                  "icon-allow-overlap":true,
+                  "text-field":["get","name"],
+                  "text-font":["Open Sans Bold","Arial Unicode MS Bold"],
+                  "text-size":12,
+                  "text-anchor":"top",
+                  "text-offset":[0,1.2],
+                  "text-allow-overlap":true
+                },
+                paint:{
+                  "text-color":"#1f2937",
+                  "text-halo-color":"#fff",
+                  "text-halo-width":1.5
+                }
+              });
+      
+              // Click popup for each marker
+              map.on('click',"regionLayer",(e)=>{
+                const props = e.features[0].properties;
+                new maplibregl.Popup()
+                  .setLngLat(e.lngLat)
+                  .setHTML(`<b>${props.name}</b><br>${props.description || ''}`)
+                  .addTo(map);
+              });
+      
+              map.on('mouseenter',"regionLayer",()=>map.getCanvas().style.cursor='pointer');
+              map.on('mouseleave',"regionLayer",()=>map.getCanvas().style.cursor='');
+            }
+          });
+        }
+      
+        function closeRegion(){
+          backBtn.style.display="none";
+          if(map.getLayer("regionLayer")) map.removeLayer("regionLayer");
+          if(map.getSource("regionSource")) map.removeSource("regionSource");
+          map.setLayoutProperty("cityLabelsLayer","visibility","visible");
+          map.flyTo({ center:[106.7009,10.7769], zoom:8 });
+        }
       });
-    
-      map.addControl(new maplibregl.NavigationControl());
-    
-      const regions = [
-        { name: "Thủ Dầu Một", coords: [106.6519, 10.9804], zoom: 11, pmtiles: "thudaumot.pmtiles", layer: "thudaumot" },
-        { name: "Sài Gòn", coords: [106.7009, 10.7769], zoom: 11, pmtiles: "saigon.pmtiles", layer: "saigon" },
-        { name: "Vũng Tàu", coords: [107.1362, 10.4114], zoom: 11, pmtiles: "vungtau.pmtiles", layer: "vungtau" }
-      ];
-    
-      const regionLayerId = "regionLayer";
-      const regionSourceId = "regionSource";
-      let currentRegion = null;
-    
-      // --- Back button ---
-      const backBtn = document.createElement("div");
-      backBtn.style.cssText = "position:absolute;top:10px;right:10px;padding:6px 10px;background:white;border-radius:4px;cursor:pointer;font-weight:600;display:none;";
-      backBtn.innerText = "← Back";
-      backBtn.onclick = closeRegion;
-      document.body.appendChild(backBtn);
-    
-      // --- Load overlay data (HCMC GeoJSON) ---
-      const overlayData = await fetch('hcmc.geojson').then(res => res.json());
-    
-      // --- Map on load ---
-      map.on('load', async () => {
-        // Add HCMC overlay
-        map.addSource('hcmcOverlay', { type: 'geojson', data: overlayData });
-        map.addLayer({
-          id: 'hcmcOverlayLayer',
-          type: 'fill',
-          source: 'hcmcOverlay',
-          paint: { 'fill-color': 'green', 'fill-opacity': 0.1 }
-        });
-        map.addLayer({
-          id: 'hcmcOverlayOutline',
-          type: 'line',
-          source: 'hcmcOverlay',
-          paint: { 'line-color': 'green', 'line-width': 1.5 }
-        });
-    
-        // --- Add city labels as symbol layer (always visible) ---
-        const cityGeoJSON = {
-          type: "FeatureCollection",
-          features: regions.map(r => ({
-            type: "Feature",
-            geometry: { type: "Point", coordinates: r.coords },
-            properties: { name: r.name }
-          }))
-        };
-    
-        map.addSource("cityLabels", { type: "geojson", data: cityGeoJSON });
-        map.addLayer({
-          id: "cityLabelsLayer",
-          type: "symbol",
-          source: "cityLabels",
-          layout: {
-            "text-field": ["get", "name"],
-            "text-font": ["Open Sans Bold","Arial Unicode MS Bold"],
-            "text-size": 14,
-            "text-anchor": "top",
-            "text-offset": [0, 1.2],
-            "text-allow-overlap": true
-          },
-          paint: { "text-color": "#1f2937", "text-halo-color": "#fff", "text-halo-width": 1.5 }
-        });
-    
-        // --- Add clickable markers for cities ---
-        regions.forEach(region => {
-          const el = document.createElement("div");
-          el.style.cssText = "width:20px;height:20px;border-radius:50%;background:#3b82f6;cursor:pointer";
-          const marker = new maplibregl.Marker(el).setLngLat(region.coords).addTo(map);
-          el.addEventListener("click", () => openRegion(region));
-        });
-      });
-    
-      // --- Open region ---
-      async function openRegion(region) {
-        currentRegion = region;
-        backBtn.style.display = "block";
-    
-        // Hide city labels temporarily
-        map.setLayoutProperty("cityLabelsLayer", "visibility", "none");
-    
-        // Fly to region
-        map.flyTo({ center: region.coords, zoom: region.zoom });
-    
-        // Remove previous region source/layer
-        if (map.getLayer(regionLayerId)) map.removeLayer(regionLayerId);
-        if (map.getSource(regionSourceId)) map.removeSource(regionSourceId);
-    
-        // Add PMTiles source
-        map.addSource(regionSourceId, {
-          type: "vector",
-          url: `pmtiles://${region.pmtiles}`,
-          minzoom: 0,
-          maxzoom: 14
-        });
-    
-        map.once('data', (e) => {
-          if (e.sourceId === regionSourceId) {
-            // Add layer for markers
-            map.addLayer({
-              id: regionLayerId,
-              type: "symbol",
-              source: regionSourceId,
-              "source-layer": region.layer,
-              layout: {
-                "icon-image": ["get","type"], // matches your singular SVG names
-                "icon-size": 1,
-                "icon-allow-overlap": true,
-                "text-field": ["get","name"],
-                "text-font": ["Open Sans Bold","Arial Unicode MS Bold"],
-                "text-size": 12,
-                "text-anchor": "top",
-                "text-offset": [0,1.2],
-                "text-allow-overlap": true
-              },
-              paint: {
-                "text-color": "#1f2937",
-                "text-halo-color": "#fff",
-                "text-halo-width": 1.5
-              }
-            });
-    
-            // Click popup
-            map.on("click", regionLayerId, (e) => {
-              const props = e.features[0].properties;
-              new maplibregl.Popup()
-                .setLngLat(e.lngLat)
-                .setHTML(`
-                  <b>${props.name}</b><br>
-                  ${props.description || ''}<br>
-                  ${props.address ? props.address + "<br>" : ""}
-                  ${props.phone ? "📞 " + props.phone + "<br>" : ""}
-                  ${props.email ? '✉️ <a href="mailto:' + props.email + '">' + props.email + '</a><br>' : ''}
-                  ${props.website ? '<a href="' + props.website + '" target="_blank">Visit website</a>' : ''}
-                `)
-                .addTo(map);
-            });
-          }
-        });
-      }
-    
-      // --- Close region ---
-      function closeRegion() {
-        backBtn.style.display = "none";
-        if (map.getLayer(regionLayerId)) map.removeLayer(regionLayerId);
-        if (map.getSource(regionSourceId)) map.removeSource(regionSourceId);
-    
-        // Show city labels again
-        map.setLayoutProperty("cityLabelsLayer", "visibility", "visible");
-        map.flyTo({ center: [106.7009, 10.7769], zoom: 8 });
-      }
-    });
     </script>
     
     <!-- <script>
