@@ -323,6 +323,7 @@
         font-size: 13px;
         white-space: nowrap;
       }
+      
       .region-marker {
         width: 18px;
         height: 18px;
@@ -331,6 +332,7 @@
         cursor: pointer;
         border: 2px solid white;
       }
+      
       #backBtn {
         position: absolute;
         top: 10px;
@@ -343,15 +345,19 @@
         display: none;
         z-index: 10;
       }
+      
       .region-pin {
         width: 20px;
         height: 20px;
         background: orange;
         border-radius: 50%;
         border: 2px solid #fff;
-        box-shadow: 0 0 0 1px rgba(0,0,0,0.15);
         cursor: pointer;
+        box-shadow: 0 0 3px rgba(0,0,0,0.3);
+        position: relative; /* ensure it’s positioned */
+        z-index: 5;
       }
+
       /* Back and 3D toggle buttons */
       .map-button {
         position: absolute;
