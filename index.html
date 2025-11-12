@@ -427,6 +427,13 @@
         <br><br>
         <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async></script>
         <script>
+          import * as pmtiles from "https://unpkg.com/pmtiles@3.0.3/dist/index.js";
+
+          document.addEventListener("DOMContentLoaded", async () => {
+            // Register the pmtiles protocol globally for maplibre
+            const protocol = new pmtiles.Protocol();
+            maplibregl.addProtocol("pmtiles", protocol.tile);
+            
           document.addEventListener("DOMContentLoaded", () => {
             const form = document.getElementById('artForm');
             form.addEventListener('submit', async e => {
