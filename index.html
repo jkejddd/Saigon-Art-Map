@@ -28,8 +28,8 @@
 
     <link rel="preconnect" href="https://unpkg.com" crossorigin/>
     <link href="https://unpkg.com/maplibre-gl@^5.12.0/dist/maplibre-gl.css" rel="stylesheet" media="print" onload="this.media='all'"/>
-    <script src="https://unpkg.com/maplibre-gl@^5.12.0/dist/maplibre-gl.js" defer></script>
-    <script src="https://unpkg.com/@protomaps/pmtiles@1.4.0/dist/pmtiles.js" defer></script>
+    <script src="https://unpkg.com/maplibre-gl@^5.12.0/dist/maplibre-gl.js"></script>
+    <script src="https://unpkg.com/@protomaps/pmtiles@1.4.0/dist/pmtiles.js"></script>
     
     <style>
       html, body, .hcmctext {
@@ -500,6 +500,11 @@
     
     <script>
       document.addEventListener("DOMContentLoaded", async () => {
+        // Wait for pmtiles library to load
+        while (typeof pmtiles === 'undefined') {
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        
         // Register PMTiles protocol
         const protocol = new pmtiles.Protocol();
         maplibregl.addProtocol("pmtiles", protocol.tile);
@@ -532,17 +537,16 @@
           // Load custom marker icons
           const iconTypes = ['gallery', 'cafe', 'museum', 'studio', 'other'];
           
-          for (const type of iconTypes) {
-            try {
-              const response = await fetch(`markers/${type}.svg`);
-              const blob = await response.blob();
-              const img = await createImageBitmap(blob);
-              map.addImage(type, img);
+          iconTypes.forEach(type => {
+            map.loadImage(`markers/${type}.svg`, (error, image) => {
+              if (error) {
+                console.error(`Error loading ${type} icon:`, error);
+                return;
+              }
+              map.addImage(type, image);
               console.log(`Loaded icon: ${type}`);
-            } catch (error) {
-              console.error(`Error loading ${type} icon:`, error);
-            }
-          }
+            });
+          });
       
           // Load HCMC overlay
           try {
