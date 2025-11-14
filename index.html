@@ -471,8 +471,202 @@
         <a class="contact" href="https://www.facebook.com/saigonartmap">Facebook fanpage: @saigonartmap</a>
         <br><br><br><br>
     </footer>
-    
+
     <script>
+      const map = new maplibregl.Map({
+        container: 'map',
+        style: 'https://tiles.openfreemap.org/styles/liberty',
+        center: [106.7009, 10.7769],
+        zoom: 8
+      });
+
+      map.on('load', () => {
+        map.addSource('hcmcOverlay', {
+          type: 'geojson',
+          data: 'hcmc.geojson'
+        });
+
+        map.addLayer({
+          id: 'greenFill',
+          type: 'fill',
+          source: 'hcmcOverlay',
+          paint: { 'fill-color': 'green', 'fill-opacity': 0.1 }
+        });
+
+        map.addLayer({
+          id: 'greenLine',
+          type: 'line',
+          source: 'hcmcOverlay',
+          paint: { 'line-color': 'green', 'line-width': 1.5 }
+        });
+
+        const regions = [
+          {name: "Thủ Dầu Một", coords: [106.6519, 10.9804], zoom: 11, file: "thudaumot.geojson"},
+          {name: "Sài Gòn", coords: [106.7009, 10.7769], zoom: 11, file: "saigon.geojson"},
+          {name: "Vũng Tàu", coords: [107.1362, 10.4114], zoom: 11, file: "vungtau.geojson"}
+        ];
+
+        const cityMarkers = [];
+        let cityPopups = [];
+        const backButton = document.getElementById('backButton');
+
+        regions.forEach(region => {
+          const popup = new maplibregl.Popup({
+            offset: 30,
+            closeButton: false,
+            closeOnClick: false,
+            anchor: 'bottom'
+          }).setHTML(`<div class="textp">${region.name}</div>`);
+
+          cityPopups.push(popup);
+
+          const cityMarker = new maplibregl.Marker({ color: "#3FB1CE" })
+            .setLngLat(region.coords)
+            .setPopup(popup)
+            .addTo(map);
+
+          cityMarker.togglePopup();
+
+          cityMarker.getElement().addEventListener('click', async () => {
+            console.log('City marker clicked:', region.name);
+            
+            map.flyTo({ center: region.coords, zoom: region.zoom });
+
+            cityMarkers.forEach(m => m.getElement().style.display = 'none');
+            backButton.style.display = 'block';
+
+            if (map.getLayer('points-layer')) map.removeLayer('points-layer');
+            if (map.getSource('points')) map.removeSource('points');
+
+            const iconMap = {
+              gallery: 'markers/sam-gallery.png',
+              cafe: 'markers/sam-cafe.png',
+              museum: 'markers/sam-museum.png',
+              studio: 'markers/sam-studio.png',
+              other: 'markers/sam-other.png'
+            };
+
+            console.log('Loading icons...');
+            try {
+              for (const [type, url] of Object.entries(iconMap)) {
+                const iconName = `sam-${type}`;
+                if (!map.hasImage(iconName)) {
+                  console.log(`Attempting to load: ${iconName} from ${url}`);
+                  await new Promise((resolve) => {
+                    const timeout = setTimeout(() => {
+                      console.error(`Timeout loading icon: ${iconName}`);
+                      resolve();
+                    }, 15000);
+                    
+                    map.loadImage(url, (error, image) => {
+                      clearTimeout(timeout);
+                      if (error) {
+                        console.error(`Failed to load icon ${iconName}:`, error);
+                        resolve();
+                        return;
+                      }
+                      console.log(`Icon loaded successfully: ${iconName}`);
+                      map.addImage(iconName, image, { pixelRatio: 2 });
+                      resolve();
+                    });
+                  });
+                } else {
+                  console.log(`Icon already exists: ${iconName}`);
+                }
+              }
+              console.log('All icons processed');
+            } catch (error) {
+              console.error('Error loading icons:', error);
+            }
+
+            console.log('Fetching GeoJSON:', region.file);
+            try {
+              const response = await fetch(region.file);
+              const geojsonData = await response.json();
+              console.log('GeoJSON loaded:', geojsonData);
+
+              map.addSource('points', {
+                type: 'geojson',
+                data: geojsonData
+              });
+
+              map.addLayer({
+                id: 'points-layer',
+                type: 'symbol',
+                source: 'points',
+                layout: {
+                  'icon-image': ['concat', 'sam-', ['get', 'type']],
+                  'icon-size': 1.5,
+                  'icon-allow-overlap': true
+                }
+              });
+              console.log('Layer added successfully');
+
+              if (!map.hasListenerForPointsLayer) {
+                map.on('click', 'points-layer', (e) => {
+                  const feature = e.features[0];
+                  const coords = feature.geometry.coordinates.slice();
+                  const props = feature.properties;
+                  new maplibregl.Popup({ offset: 30 })
+                    .setLngLat(coords)
+                    .setHTML(`
+                      <div class="textp">
+                        <h2>${props.name || ''}</h2>
+                        ${props.description || ''}<br>
+                        ${props.address || ''}<br>
+                        ${props.phone ? '📞 ' + props.phone + '<br>' : ''}
+                        ${props.email ? '✉️ <a href="mailto:' + props.email + '">' + props.email + '</a><br>' : ''}
+                        ${props.website ? '<a href="' + props.website + '" target="_blank">Visit website</a>' : ''}
+                      </div>
+                    `)
+                    .addTo(map);
+                });
+                map.hasListenerForPointsLayer = true;
+              }
+            } catch (error) {
+              console.error('Error loading GeoJSON:', error);
+            }
+          });
+
+          cityMarkers.push(cityMarker);
+        });
+
+        function removeAllPopups() {
+          cityPopups.forEach(p => p.remove());
+          cityPopups = [];
+        }
+
+        backButton.addEventListener('click', () => {
+          if (map.getLayer('points-layer')) map.removeLayer('points-layer');
+          if (map.getSource('points')) map.removeSource('points');
+
+          map.getCanvas().style.cursor = '';
+
+          removeAllPopups();
+
+          cityMarkers.forEach(marker => marker.getElement().style.display = 'block');
+
+          map.flyTo({ center: [106.7009, 10.7769], zoom: 8 });
+
+          backButton.style.display = 'none';
+
+          regions.forEach((region, index) => {
+            const popup = new maplibregl.Popup({
+              offset: 30,
+              closeButton: false,
+              closeOnClick: false,
+              anchor: 'bottom'
+            }).setHTML(`<div class="textp">${region.name}</div>`);
+
+            cityPopups.push(popup);
+            cityMarkers[index].setPopup(popup);
+            cityMarkers[index].togglePopup();
+          });
+        });
+      });
+    </script>
+    
+    <!-- <script>
       document.addEventListener("DOMContentLoaded", () => {
         const map = L.map("map").setView([10.7769, 106.7009], 8);
         
@@ -571,6 +765,6 @@
           map.setView([10.7769, 106.7009], 8);
         }
       });
-    </script>
+    </script> -->
   </body>
 </html>
