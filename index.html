@@ -483,6 +483,8 @@
               const elements = Array.from(svg.querySelectorAll('path, rect, polygon, ellipse, circle'));
 
               elements.sort((a, b) => distanceFromBottomRight(a) - distanceFromBottomRight(b));
+              
+              void svg.offsetWidth;
 
               elements.forEach((el, index) => {
                 el.classList.add('fill-animate');
