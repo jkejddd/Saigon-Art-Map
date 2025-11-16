@@ -459,37 +459,37 @@
         <div id="roads"></div>
       </section>
       <script>
+        fetch('roads.svg')
         document.addEventListener('DOMContentLoaded', () => {
-          fetch('roads.svg')
-            .then(res => res.text())
-            .then(svgText => {
-              const container = document.getElementById('roads');
-              container.innerHTML = svgText;
+          .then(res => res.text())
+          .then(svgText => {
+            const container = document.getElementById('roads');
+            container.innerHTML = svgText;
 
-              const svg = container.querySelector('svg');
+            const svg = container.querySelector('svg');
 
-              svg.setAttribute('preserveAspectRatio', 'xMaxYMax meet');
-              svg.style.display = 'block';
-              svg.style.overflow = 'hidden';
+            svg.setAttribute('preserveAspectRatio', 'xMaxYMax meet');
+            svg.style.display = 'block';
+            svg.style.overflow = 'hidden';
 
-              const mask = document.createElementNS("http://www.w3.org/2000/svg", "mask");
-              mask.setAttribute("id", "diagonal-mask");
+            const mask = document.createElementNS("http://www.w3.org/2000/svg", "mask");
+            mask.setAttribute("id", "diagonal-mask");
 
-              const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-              rect.setAttribute("fill", "white");
-              rect.setAttribute("x", "100%");
-              rect.setAttribute("y", "100%");
-              rect.setAttribute("width", "0");
-              rect.setAttribute("height", "0");
-              rect.style.animation = "reveal 3.5s linear forwards";
+            const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+            rect.setAttribute("fill", "white");
+            rect.setAttribute("x", "100%");
+            rect.setAttribute("y", "100%");
+            rect.setAttribute("width", "0");
+            rect.setAttribute("height", "0");
+            rect.style.animation = "reveal 3.5s linear forwards";
 
-              mask.appendChild(rect);
-              svg.appendChild(mask);
+            mask.appendChild(rect);
+            svg.appendChild(mask);
 
-              svg.querySelectorAll('path, rect, g').forEach(el => {
-                el.setAttribute('mask','url(#diagonal-mask)');
-              });
+            svg.querySelectorAll('path, rect, g').forEach(el => {
+              el.setAttribute('mask','url(#diagonal-mask)');
             });
+          });
         });
       </script>
     </header>
