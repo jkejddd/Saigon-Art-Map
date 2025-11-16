@@ -78,7 +78,7 @@
     },
     {
       "type": "Feature",
-      "geometry": { "type": "Point", "coordinates": [10.78989, 106.68880] },
+      "geometry": { "type": "Point", "coordinates": [106.68880, 10.78989] },
       "properties": {"name": "An Nam Gallery", "description": "<br>It is a small but cosy exhibition space, although some have commented that the lighting is insufficient. The gallery also regularly updates information about events on Facebook, making it relatively easy to access.<br><br>Là một không gian trưng bày nhỏ nhưng ấm cúng, tuy nhiên không gian được một vài nhận xét về ánh sáng không đủ . Gallery này cũng thường xuyên cập nhật thông tin về sự kiện trên nền tảng Facebook nên tương đối dễ tiếp cận", "phone": "(+84) 038 782 5800", "email": "info@annamgallery.com", "address": "<br>371/4 Hai Bà Trưng, Phường Xuân Hòa, TP. HCM<br>", "website": "https://annamgallery.com/", "type": "gallery"}
     },
     {
