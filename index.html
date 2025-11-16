@@ -685,7 +685,7 @@
             closeButton: false,
             closeOnClick: false,
             anchor: 'bottom',
-            className: 'city-popup'  // <-- add this!
+            className: 'city-popup'
           }).setHTML(`<div class="textp">${region.name}</div>`);
 
           cityPopups.push(popup);
@@ -767,7 +767,7 @@
                 popupDiv.className = 'markerPopup textp';
                 popupDiv.innerHTML = `
                   <button class="popupClose">x</button>
-                  <h3 style="font-size: ${props.name.length > 20 ? '2rem' : '3rem'}">${props.name || ''}</h3>
+                  <h3 style="font-size: ${props.name.length > 12 ? '2.3rem' : '3rem'}">${props.name || ''}</h3>
                   ${props.description || ''}<br>
                   ${props.address || ''}<br>
                   ${props.phone ? '📞 ' + props.phone + '<br>' : ''}
