@@ -447,9 +447,7 @@
     </style>
   </head>
   <body>
-    <script>
-      window.roadsEarly = fetch('roads.svg').then(r => r.text());
-    </script>
+    
     <header>
       <section class="hero" id="hero">
         <h1 class="hidden">Saigon Art Map</h1>
@@ -461,47 +459,37 @@
         <div id="roads"></div>
       </section>
       <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-          try {
-            const container = document.getElementById('roads');
-        
-            const svgText = await window.roadsEarly;
-            container.innerHTML = svgText;
-        
-            const svg = container.querySelector('svg');
-        
-            if (!svg) {
-              console.error("SVG failed to load into container.");
-              return;
-            }
-        
-            svg.setAttribute('preserveAspectRatio', 'xMaxYMax meet');
-            svg.style.display = 'block';
-            svg.style.overflow = 'hidden';
-        
-            const mask = document.createElementNS("http://www.w3.org/2000/svg", "mask");
-            mask.setAttribute("id", "diagonal-mask");
-        
-            const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-            rect.setAttribute("fill", "white");
-            rect.setAttribute("x", "100%");
-            rect.setAttribute("y", "100%");
-            rect.setAttribute("width", "0");
-            rect.setAttribute("height", "0");
-            rect.style.animation = "reveal 3.5s linear forwards";
-        
-            mask.appendChild(rect);
-            svg.appendChild(mask);
-        
-            svg.querySelectorAll('path, rect, g').forEach(el => {
-              el.setAttribute('mask','url(#diagonal-mask)');
+        document.addEventListener('DOMContentLoaded', () => {
+          fetch('roads.svg')
+            .then(res => res.text())
+            .then(svgText => {
+              const container = document.getElementById('roads');
+              container.innerHTML = svgText;
+
+              const svg = container.querySelector('svg');
+
+              svg.setAttribute('preserveAspectRatio', 'xMaxYMax meet');
+              svg.style.display = 'block';
+              svg.style.overflow = 'hidden';
+
+              const mask = document.createElementNS("http://www.w3.org/2000/svg", "mask");
+              mask.setAttribute("id", "diagonal-mask");
+
+              const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+              rect.setAttribute("fill", "white");
+              rect.setAttribute("x", "100%");
+              rect.setAttribute("y", "100%");
+              rect.setAttribute("width", "0");
+              rect.setAttribute("height", "0");
+              rect.style.animation = "reveal 3.5s linear forwards";
+
+              mask.appendChild(rect);
+              svg.appendChild(mask);
+
+              svg.querySelectorAll('path, rect, g').forEach(el => {
+                el.setAttribute('mask','url(#diagonal-mask)');
+              });
             });
-        
-            startAnimation();
-        
-          } catch (err) {
-            console.error("Failed to initialise SVG animation:", err);
-          }
         });
       </script>
     </header>
