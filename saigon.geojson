@@ -14,7 +14,7 @@
     {
       "type": "Feature",
       "geometry": { "type": "Point", "coordinates": [106.69954, 10.77611] },
-      "properties": {"name": "Bảo tàng Thành phố Hồ Chí Minh, Museum of Ho Chi Minh City", "description": "<br>One of the city's major museums. The museum is an architectural masterpiece steeped in classic French style with exquisite sculptural details, making it ideal for research activities (history, culture, religion, etc.). <br><br>Một trong những bảo tàng lớn của thành phố. Bảo tàng là một công trình kiến trúc nghệ thuật mang đậm phong cách Pháp cổ kính với chi tiết điêu khắc tinh xảo, bảo tàng thích hợp cho hoạt động nghiên cứu (lịch sử, văn hóa, tín ngưỡng,...)", "phone": "(+84)  028 3829 9741", "email": "baotangtphcm@gmail.com", "address": "<br>65 Lý Tự Trọng, Phường Sài Gòn, TP. HCM<br>", "website": "https://hcmc-museum.edu.vn/", "type": "museum"}
+      "properties": {"name": "Museum of Ho Chi Minh City", "description": "<br>One of the city's major museums. The museum is an architectural masterpiece steeped in classic French style with exquisite sculptural details, making it ideal for research activities (history, culture, religion, etc.). <br><br>Một trong những bảo tàng lớn của thành phố. Bảo tàng là một công trình kiến trúc nghệ thuật mang đậm phong cách Pháp cổ kính với chi tiết điêu khắc tinh xảo, bảo tàng thích hợp cho hoạt động nghiên cứu (lịch sử, văn hóa, tín ngưỡng,...)", "phone": "(+84)  028 3829 9741", "email": "baotangtphcm@gmail.com", "address": "<br>65 Lý Tự Trọng, Phường Sài Gòn, TP. HCM<br>", "website": "https://hcmc-museum.edu.vn/", "type": "museum"}
     },
     {
       "type": "Feature",
