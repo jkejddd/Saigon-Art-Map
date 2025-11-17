@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -458,65 +457,130 @@
         <div id="roads"></div>
       </section>
       <script>
-        document.addEventListener('DOMContentLoaded', () => {
-          fetch('roads.svg')
-            .then(res => res.text())
-            .then(svgText => {
-              const container = document.getElementById('roads');
-              container.innerHTML = svgText;
+document.addEventListener('DOMContentLoaded', () => {
+  // Detect if mobile device
+  const isMobile = window.innerWidth <= 768 || 
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-              const svg = container.querySelector('svg');
-              svg.setAttribute('preserveAspectRatio', 'xMaxYMax meet');
-              svg.style.display = 'block';
-              svg.style.overflow = 'hidden';
+  fetch('roads.svg')
+    .then(res => res.text())
+    .then(svgText => {
+      const container = document.getElementById('roads');
+      container.innerHTML = svgText;
 
-              function distanceFromBottomRight(el) {
-                const bbox = el.getBBox();
-                const cx = bbox.x + bbox.width;
-                const cy = bbox.y + bbox.height;
-                const svgWidth = svg.viewBox.baseVal.width || svg.clientWidth;
-                const svgHeight = svg.viewBox.baseVal.height || svg.clientHeight;
-                const dx = svgWidth - cx;
-                const dy = svgHeight - cy;
-                return Math.sqrt(dx*dx + dy*dy);
-              }
+      const svg = container.querySelector('svg');
+      svg.setAttribute('preserveAspectRatio', 'xMaxYMax meet');
+      svg.style.display = 'block';
+      svg.style.overflow = 'hidden';
 
-              const elements = Array.from(svg.querySelectorAll('path, rect, polygon, ellipse, circle'));
+      const elements = Array.from(svg.querySelectorAll('path, rect, polygon, ellipse, circle'));
 
-              elements.sort((a, b) => distanceFromBottomRight(a) - distanceFromBottomRight(b));
-              
-              void svg.offsetWidth;
+      if (isMobile) {
+        function distanceFromBottomRight(el) {
+          const bbox = el.getBBox();
+          const cx = bbox.x + bbox.width;
+          const cy = bbox.y + bbox.height;
+          const svgWidth = svg.viewBox.baseVal.width || svg.clientWidth;
+          const svgHeight = svg.viewBox.baseVal.height || svg.clientHeight;
+          const dx = svgWidth - cx;
+          const dy = svgHeight - cy;
+          return Math.sqrt(dx*dx + dy*dy);
+        }
 
-              elements.forEach((el, index) => {
-                el.classList.add('fill-animate');
-                el.style.animationDelay = `${index * 0.1}s`;
+        elements.sort((a, b) => distanceFromBottomRight(a) - distanceFromBottomRight(b));
 
-                const origStroke = el.getAttribute('stroke');
-                const strokeColor = origStroke && origStroke !== 'none' ? origStroke : '#333';
-                el.setAttribute('stroke', strokeColor);
-                el.setAttribute('stroke-width', 2);
+        void svg.offsetWidth;
 
-                if (el.tagName === 'path') {
-                  const length = el.getTotalLength();
-                  el.style.strokeDasharray = length;
-                  el.style.strokeDashoffset = length;
-                  setTimeout(() => {
-                    el.style.transition = 'stroke-dashoffset 0.7s linear, stroke-opacity 0.6s ease';
-                    el.style.strokeDashoffset = 0;
-                    setTimeout(() => el.style.strokeOpacity = 0, 700);
-                  }, index * 100);
-                } else {
+        elements.forEach((el, index) => {
+          const origStroke = el.getAttribute('stroke');
+          const strokeColor = origStroke && origStroke !== 'none' ? origStroke : '#333';
+          el.setAttribute('stroke', strokeColor);
+          el.setAttribute('stroke-width', 2);
+          el.classList.add('fill-animate');
+          el.style.animationDelay = `${index * 0.05}s`;
+          
+          const delay = index * 50;
+          
+          if (el.tagName === 'path') {
+            const length = el.getTotalLength();
+            el.style.strokeDasharray = length;
+            el.style.strokeDashoffset = length;
+            el.style.strokeOpacity = 1;
+            
+            setTimeout(() => {
+              requestAnimationFrame(() => {
+                el.style.transition = 'stroke-dashoffset 0.7s linear, stroke-opacity 0.4s ease';
+                el.style.strokeDashoffset = 0;
+                
+                setTimeout(() => {
                   el.style.strokeOpacity = 0;
-                  setTimeout(() => {
-                    el.style.transition = 'stroke-opacity 0.7s ease';
-                    el.style.strokeOpacity = 1;
-                    setTimeout(() => el.style.strokeOpacity = 0, 700);
-                  }, index * 100);
-                }
+                }, 500);
               });
-            })
-            .catch(err => console.error('Error loading SVG:', err));
+            }, delay);
+          } else {
+            el.style.strokeOpacity = 0;
+            
+            setTimeout(() => {
+              requestAnimationFrame(() => {
+                el.style.transition = 'stroke-opacity 1s ease';
+                el.style.strokeOpacity = 1;
+                
+                setTimeout(() => {
+                  el.style.transition = 'stroke-opacity 1s ease';
+                  el.style.strokeOpacity = 0;
+                }, 500);
+              });
+            }, delay);
+          }
         });
+        
+      } else {
+        function distanceFromBottomRight(el) {
+          const bbox = el.getBBox();
+          const cx = bbox.x + bbox.width;
+          const cy = bbox.y + bbox.height;
+          const svgWidth = svg.viewBox.baseVal.width || svg.clientWidth;
+          const svgHeight = svg.viewBox.baseVal.height || svg.clientHeight;
+          const dx = svgWidth - cx;
+          const dy = svgHeight - cy;
+          return Math.sqrt(dx*dx + dy*dy);
+        }
+
+        elements.sort((a, b) => distanceFromBottomRight(a) - distanceFromBottomRight(b));
+        
+        void svg.offsetWidth;
+
+        elements.forEach((el, index) => {
+          el.classList.add('fill-animate');
+          el.style.animationDelay = `${index * 0.1}s`;
+
+          const origStroke = el.getAttribute('stroke');
+          const strokeColor = origStroke && origStroke !== 'none' ? origStroke : '#333';
+          el.setAttribute('stroke', strokeColor);
+          el.setAttribute('stroke-width', 2);
+
+          if (el.tagName === 'path') {
+            const length = el.getTotalLength();
+            el.style.strokeDasharray = length;
+            el.style.strokeDashoffset = length;
+            setTimeout(() => {
+              el.style.transition = 'stroke-dashoffset 0.7s linear, stroke-opacity 0.6s ease';
+              el.style.strokeDashoffset = 0;
+              setTimeout(() => el.style.strokeOpacity = 0, 700);
+            }, index * 100);
+          } else {
+            el.style.strokeOpacity = 0;
+            setTimeout(() => {
+              el.style.transition = 'stroke-opacity 0.7s ease';
+              el.style.strokeOpacity = 1;
+              setTimeout(() => el.style.strokeOpacity = 0, 700);
+            }, index * 100);
+          }
+        });
+      }
+    })
+    .catch(err => console.error('Error loading SVG:', err));
+});
       </script>
     </header>
   
