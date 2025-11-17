@@ -26,7 +26,7 @@
     <link rel="preconnect" href="https://unpkg.com" crossorigin/>
     <link rel="preload" href="https://unpkg.com/maplibre-gl@^5.12.0/dist/maplibre-gl.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="https://unpkg.com/maplibre-gl@^5.12.0/dist/maplibre-gl.css"></noscript>
-    <script src="https://unpkg.com/maplibre-gl@^5.12.0/dist/maplibre-gl.js"></script>
+    <script src="https://unpkg.com/maplibre-gl@^5.12.0/dist/maplibre-gl.js" defer></script>
     
     <style>
         html, body, .hcmctext {
@@ -762,245 +762,247 @@
       </section>
     </footer>
 
-    <script>
-      const map = new maplibregl.Map({
-        container: 'map',
-        style: 'https://tiles.openfreemap.org/styles/liberty',
-        center: [106.7009, 10.7769],
-        zoom: 8
-      });
-
-      map.on('load', () => {
-        map.addSource('hcmcOverlay', {
-          type: 'geojson',
-          data: 'hcmc.geojson'
+    <script defer>
+      document.addEventListener('DOMContentLoaded', () => {
+        const map = new maplibregl.Map({
+          container: 'map',
+          style: 'https://tiles.openfreemap.org/styles/liberty',
+          center: [106.7009, 10.7769],
+          zoom: 8
         });
 
-        map.addLayer({
-          id: 'greenFill',
-          type: 'fill',
-          source: 'hcmcOverlay',
-          paint: { 'fill-color': 'green', 'fill-opacity': 0.1 }
-        });
-
-        map.addLayer({
-          id: 'greenLine',
-          type: 'line',
-          source: 'hcmcOverlay',
-          paint: { 'line-color': 'green', 'line-width': 1.5 }
-        });
-
-        const regions = [
-          {name: "Thủ Dầu Một", coords: [106.6519, 10.9804], zoom: 11, file: "thudaumot.geojson"},
-          {name: "Sài Gòn", coords: [106.7009, 10.7769], zoom: 11, file: "saigon.geojson"},
-          {name: "Vũng Tàu", coords: [107.1362, 10.4114], zoom: 11, file: "vungtau.geojson"}
-        ];
-
-        const cityMarkers = [];
-        let cityPopups = [];
-        const backButton = document.getElementById('backButton');
-        let activeInfoPopup = null;
-
-        regions.forEach(region => {
-          const popup = new maplibregl.Popup({
-            offset: 30,
-            closeButton: false,
-            closeOnClick: false,
-            anchor: 'bottom',
-            className: 'city-popup'
-          }).setHTML(`<div class="textp">${region.name}</div>`);
-
-          cityPopups.push(popup);
-
-          const cityMarker = new maplibregl.Marker({ color: "#3FB1CE" })
-            .setLngLat(region.coords)
-            .setPopup(popup)
-            .addTo(map);
-
-          cityMarker.togglePopup();
-
-          cityMarker.getElement().addEventListener('click', async () => {
-            console.log('City marker clicked:', region.name);
-            map.flyTo({ center: region.coords, zoom: region.zoom });
-
-            cityMarkers.forEach(m => m.getElement().style.display = 'none');
-            backButton.style.display = 'block';
-
-            cityPopups.forEach(p => p.remove());
-            cityPopups = [];
-
-            cityMarker.setPopup(null);
-
-            if (map.getLayer('points-layer')) map.removeLayer('points-layer');
-            if (map.getSource('points')) map.removeSource('points');
-
-            console.log('Fetching GeoJSON:', region.file);
-            
-            try {
-              const response = await fetch(region.file);
-              const geojsonData = await response.json();
-              console.log('GeoJSON loaded:', geojsonData);
-
-              geojsonData.features.forEach(feature => {
-                const { coordinates } = feature.geometry;
-                  const { type, title } = feature.properties;
-
-                  if (map.getSource('points')){
-                    map.getSource('points', {
-                      data: geojsonData
-                    });
-                  } else{
-                    map.addSource('points', {
-                      type: 'geojson',
-                      data: geojsonData
-                    });
-                  }
-
-                  map.addLayer({
-                    id: 'points-layer',
-                    type: 'circle',
-                    source: 'points',
-                    paint: {
-                      'circle-radius': 10,
-                      'circle-color': [
-                        'match',
-                        ['get', 'type'],
-                        'gallery', '#e74c3c',
-                        'cafe',    '#3498db',
-                        'museum',  '#9b59b6',
-                        'studio',  '#f1c40f',
-                        '#95a5a6'
-                      ],
-                      'circle-stroke-color': '#fff',
-                      'circle-stroke-width': 3
-                    }
-                  });
-              });
-
-              map.on('click', 'points-layer', (e) => {
-                const feature = e.features[0];
-                const props = feature.properties;
-
-                if (activeInfoPopup) activeInfoPopup.remove();
-                
-                const popupDiv = document.createElement('div');
-                popupDiv.className = 'markerPopup textp';
-
-                popupDiv.innerHTML = `
-                  <button class="popupClose">x</button>
-                  <h3>${props.name || ''}</h3>
-                  ${props.description || ''}<br>
-                  ${props.address || ''}<br>
-                  ${props.phone ? '📞 ' + props.phone + '<br>' : ''}
-                  ${props.email ? '✉️ <a id="email" href="mailto:' + props.email + '">' + props.email + '</a><br>' : ''}
-                  ${props.website ? '<a href="' + props.website + '" target="_blank">Visit Website</a>' : ''}
-                `;
-
-                document.getElementById('mapContainer').appendChild(popupDiv);
-
-                popupDiv.querySelector('.popupClose').addEventListener('click', () => {
-                  popupDiv.remove();
-                  activeInfoPopup = null;
-                });
-
-                activeInfoPopup = {
-                  remove: () => popupDiv.remove()
-                };
-              });
-            } catch(error) {
-              console.error('Error loading GeoJSON:', error);
-            }
+        map.on('load', () => {
+          map.addSource('hcmcOverlay', {
+            type: 'geojson',
+            data: 'hcmc.geojson'
           });
-          cityMarkers.push(cityMarker);
-        });
 
-        function removeAllPopups() {
-          cityPopups.forEach(p => p.remove());
-          cityPopups = [];
-        }
+          map.addLayer({
+            id: 'greenFill',
+            type: 'fill',
+            source: 'hcmcOverlay',
+            paint: { 'fill-color': 'green', 'fill-opacity': 0.1 }
+          });
 
-        backButton.addEventListener('click', () => {
-          if (map.getLayer('points-layer')) map.removeLayer('points-layer');
-          if (map.getSource('points')) map.removeSource('points');
+          map.addLayer({
+            id: 'greenLine',
+            type: 'line',
+            source: 'hcmcOverlay',
+            paint: { 'line-color': 'green', 'line-width': 1.5 }
+          });
 
-          map.getCanvas().style.cursor = '';
+          const regions = [
+            {name: "Thủ Dầu Một", coords: [106.6519, 10.9804], zoom: 11, file: "thudaumot.geojson"},
+            {name: "Sài Gòn", coords: [106.7009, 10.7769], zoom: 11, file: "saigon.geojson"},
+            {name: "Vũng Tàu", coords: [107.1362, 10.4114], zoom: 11, file: "vungtau.geojson"}
+          ];
 
-          removeAllPopups();
-          if (activeInfoPopup) {
-            activeInfoPopup.remove();
-            activeInfoPopup = null;
-          }
+          const cityMarkers = [];
+          let cityPopups = [];
+          const backButton = document.getElementById('backButton');
+          let activeInfoPopup = null;
 
-          cityMarkers.forEach(marker => marker.getElement().style.display = 'block');
-
-          map.flyTo({ center: [106.7009, 10.7769], zoom: 8 });
-
-          backButton.style.display = 'none';
-
-          regions.forEach((region, index) => {
+          regions.forEach(region => {
             const popup = new maplibregl.Popup({
               offset: 30,
               closeButton: false,
               closeOnClick: false,
-              anchor: 'bottom'
+              anchor: 'bottom',
+              className: 'city-popup'
             }).setHTML(`<div class="textp">${region.name}</div>`);
 
             cityPopups.push(popup);
-            cityMarkers[index].setPopup(popup);
-            cityMarkers[index].togglePopup();
+
+            const cityMarker = new maplibregl.Marker({ color: "#3FB1CE" })
+              .setLngLat(region.coords)
+              .setPopup(popup)
+              .addTo(map);
+
+            cityMarker.togglePopup();
+
+            cityMarker.getElement().addEventListener('click', async () => {
+              console.log('City marker clicked:', region.name);
+              map.flyTo({ center: region.coords, zoom: region.zoom });
+
+              cityMarkers.forEach(m => m.getElement().style.display = 'none');
+              backButton.style.display = 'block';
+
+              cityPopups.forEach(p => p.remove());
+              cityPopups = [];
+
+              cityMarker.setPopup(null);
+
+              if (map.getLayer('points-layer')) map.removeLayer('points-layer');
+              if (map.getSource('points')) map.removeSource('points');
+
+              console.log('Fetching GeoJSON:', region.file);
+              
+              try {
+                const response = await fetch(region.file);
+                const geojsonData = await response.json();
+                console.log('GeoJSON loaded:', geojsonData);
+
+                geojsonData.features.forEach(feature => {
+                  const { coordinates } = feature.geometry;
+                    const { type, title } = feature.properties;
+
+                    if (map.getSource('points')){
+                      map.getSource('points', {
+                        data: geojsonData
+                      });
+                    } else{
+                      map.addSource('points', {
+                        type: 'geojson',
+                        data: geojsonData
+                      });
+                    }
+
+                    map.addLayer({
+                      id: 'points-layer',
+                      type: 'circle',
+                      source: 'points',
+                      paint: {
+                        'circle-radius': 10,
+                        'circle-color': [
+                          'match',
+                          ['get', 'type'],
+                          'gallery', '#e74c3c',
+                          'cafe',    '#3498db',
+                          'museum',  '#9b59b6',
+                          'studio',  '#f1c40f',
+                          '#95a5a6'
+                        ],
+                        'circle-stroke-color': '#fff',
+                        'circle-stroke-width': 3
+                      }
+                    });
+                });
+
+                map.on('click', 'points-layer', (e) => {
+                  const feature = e.features[0];
+                  const props = feature.properties;
+
+                  if (activeInfoPopup) activeInfoPopup.remove();
+                  
+                  const popupDiv = document.createElement('div');
+                  popupDiv.className = 'markerPopup textp';
+
+                  popupDiv.innerHTML = `
+                    <button class="popupClose">x</button>
+                    <h3>${props.name || ''}</h3>
+                    ${props.description || ''}<br>
+                    ${props.address || ''}<br>
+                    ${props.phone ? '📞 ' + props.phone + '<br>' : ''}
+                    ${props.email ? '✉️ <a id="email" href="mailto:' + props.email + '">' + props.email + '</a><br>' : ''}
+                    ${props.website ? '<a href="' + props.website + '" target="_blank">Visit Website</a>' : ''}
+                  `;
+
+                  document.getElementById('mapContainer').appendChild(popupDiv);
+
+                  popupDiv.querySelector('.popupClose').addEventListener('click', () => {
+                    popupDiv.remove();
+                    activeInfoPopup = null;
+                  });
+
+                  activeInfoPopup = {
+                    remove: () => popupDiv.remove()
+                  };
+                });
+              } catch(error) {
+                console.error('Error loading GeoJSON:', error);
+              }
+            });
+            cityMarkers.push(cityMarker);
           });
-        });
-        const toggle3DButton = document.getElementById('toggle3DButton');
-        let is3D = false;
 
-        toggle3DButton.addEventListener('click', () => {
-          if (!is3D) {
-            map.easeTo({
-              pitch: 120,
-              bearing: 0,
-              duration: 3000
-            });
-            toggle3DButton.textContent = '2D View';
-            is3D = true;
-          } else {
-            map.easeTo({
-              pitch: 0,
-              bearing: 0,
-              duration: 1000
-            });
-            toggle3DButton.textContent = '3D View';
-            is3D = false;
+          function removeAllPopups() {
+            cityPopups.forEach(p => p.remove());
+            cityPopups = [];
           }
-        });
 
-        map.addLayer({
-          'id': '3d-buildings',
-          'source': 'openmaptiles',
-          'source-layer': 'building',
-          'type': 'fill-extrusion',
-          'minzoom': 14,
-          'paint': {
-            'fill-extrusion-color': '#aaa',
-            'fill-extrusion-height': [
-              'interpolate',
-              ['linear'],
-              ['zoom'],
-              15,
-              0,
-              15.05,
-              ['get', 'render_height']
-            ],
-            'fill-extrusion-base': [
-              'interpolate',
-              ['linear'],
-              ['zoom'],
-              15,
-              0,
-              15.05,
-              ['get', 'render_min_height']
-            ],
-            'fill-extrusion-opacity': 0.6
-          }
+          backButton.addEventListener('click', () => {
+            if (map.getLayer('points-layer')) map.removeLayer('points-layer');
+            if (map.getSource('points')) map.removeSource('points');
+
+            map.getCanvas().style.cursor = '';
+
+            removeAllPopups();
+            if (activeInfoPopup) {
+              activeInfoPopup.remove();
+              activeInfoPopup = null;
+            }
+
+            cityMarkers.forEach(marker => marker.getElement().style.display = 'block');
+
+            map.flyTo({ center: [106.7009, 10.7769], zoom: 8 });
+
+            backButton.style.display = 'none';
+
+            regions.forEach((region, index) => {
+              const popup = new maplibregl.Popup({
+                offset: 30,
+                closeButton: false,
+                closeOnClick: false,
+                anchor: 'bottom'
+              }).setHTML(`<div class="textp">${region.name}</div>`);
+
+              cityPopups.push(popup);
+              cityMarkers[index].setPopup(popup);
+              cityMarkers[index].togglePopup();
+            });
+          });
+          const toggle3DButton = document.getElementById('toggle3DButton');
+          let is3D = false;
+
+          toggle3DButton.addEventListener('click', () => {
+            if (!is3D) {
+              map.easeTo({
+                pitch: 120,
+                bearing: 0,
+                duration: 3000
+              });
+              toggle3DButton.textContent = '2D View';
+              is3D = true;
+            } else {
+              map.easeTo({
+                pitch: 0,
+                bearing: 0,
+                duration: 1000
+              });
+              toggle3DButton.textContent = '3D View';
+              is3D = false;
+            }
+          });
+
+          map.addLayer({
+            'id': '3d-buildings',
+            'source': 'openmaptiles',
+            'source-layer': 'building',
+            'type': 'fill-extrusion',
+            'minzoom': 14,
+            'paint': {
+              'fill-extrusion-color': '#aaa',
+              'fill-extrusion-height': [
+                'interpolate',
+                ['linear'],
+                ['zoom'],
+                15,
+                0,
+                15.05,
+                ['get', 'render_height']
+              ],
+              'fill-extrusion-base': [
+                'interpolate',
+                ['linear'],
+                ['zoom'],
+                15,
+                0,
+                15.05,
+                ['get', 'render_min_height']
+              ],
+              'fill-extrusion-opacity': 0.6
+            }
+          });
         });
       });
     </script>
