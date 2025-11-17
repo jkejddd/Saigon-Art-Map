@@ -689,7 +689,7 @@
         <p id="form-status" class="status-message"></p>
         <br><br>
         <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async></script>
-        <script>
+        <script defer>
           document.addEventListener("DOMContentLoaded", () => {
             const form = document.getElementById('artForm');
             form.addEventListener('submit', async e => {
