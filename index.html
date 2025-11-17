@@ -67,6 +67,7 @@
           padding: 0;
           text-align: center;
           font-style: normal;
+          word-wrap: break-word;
         }
     
         .textp {
@@ -442,6 +443,22 @@
         .above {
           z-index: 10;
         }
+
+        #toggle3DButton {
+          position: absolute;
+          top: 10px;
+          left: 10px;
+          padding: 0.5rem 1rem;
+          background-color: #FFFBF2;
+          border: 1px solid #ccc;
+          cursor: pointer;
+          z-index: 1000;
+          font-family: "Mozilla Text", "inter", system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        #toggle3DButton:hover {
+          background-color: #eee;
+        }
     </style>
   </head>
   <body>
@@ -457,130 +474,130 @@
         <div id="roads"></div>
       </section>
       <script>
-document.addEventListener('DOMContentLoaded', () => {
-  // Detect if mobile device
-  const isMobile = window.innerWidth <= 768 || 
-    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        document.addEventListener('DOMContentLoaded', () => {
+          // Detect if mobile device
+          const isMobile = window.innerWidth <= 768 || 
+            /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-  fetch('roads.svg')
-    .then(res => res.text())
-    .then(svgText => {
-      const container = document.getElementById('roads');
-      container.innerHTML = svgText;
+          fetch('roads.svg')
+            .then(res => res.text())
+            .then(svgText => {
+              const container = document.getElementById('roads');
+              container.innerHTML = svgText;
 
-      const svg = container.querySelector('svg');
-      svg.setAttribute('preserveAspectRatio', 'xMaxYMax meet');
-      svg.style.display = 'block';
-      svg.style.overflow = 'hidden';
+              const svg = container.querySelector('svg');
+              svg.setAttribute('preserveAspectRatio', 'xMaxYMax meet');
+              svg.style.display = 'block';
+              svg.style.overflow = 'hidden';
 
-      const elements = Array.from(svg.querySelectorAll('path, rect, polygon, ellipse, circle'));
+              const elements = Array.from(svg.querySelectorAll('path, rect, polygon, ellipse, circle'));
 
-      if (isMobile) {
-        function distanceFromBottomRight(el) {
-          const bbox = el.getBBox();
-          const cx = bbox.x + bbox.width;
-          const cy = bbox.y + bbox.height;
-          const svgWidth = svg.viewBox.baseVal.width || svg.clientWidth;
-          const svgHeight = svg.viewBox.baseVal.height || svg.clientHeight;
-          const dx = svgWidth - cx;
-          const dy = svgHeight - cy;
-          return Math.sqrt(dx*dx + dy*dy);
-        }
+              if (isMobile) {
+                function distanceFromBottomRight(el) {
+                  const bbox = el.getBBox();
+                  const cx = bbox.x + bbox.width;
+                  const cy = bbox.y + bbox.height;
+                  const svgWidth = svg.viewBox.baseVal.width || svg.clientWidth;
+                  const svgHeight = svg.viewBox.baseVal.height || svg.clientHeight;
+                  const dx = svgWidth - cx;
+                  const dy = svgHeight - cy;
+                  return Math.sqrt(dx*dx + dy*dy);
+                }
 
-        elements.sort((a, b) => distanceFromBottomRight(a) - distanceFromBottomRight(b));
+                elements.sort((a, b) => distanceFromBottomRight(a) - distanceFromBottomRight(b));
 
-        void svg.offsetWidth;
+                void svg.offsetWidth;
 
-        elements.forEach((el, index) => {
-          const origStroke = el.getAttribute('stroke');
-          const strokeColor = origStroke && origStroke !== 'none' ? origStroke : '#333';
-          el.setAttribute('stroke', strokeColor);
-          el.setAttribute('stroke-width', 2);
-          el.classList.add('fill-animate');
-          el.style.animationDelay = `${index * 0.05}s`;
-          
-          const delay = index * 50;
-          
-          if (el.tagName === 'path') {
-            const length = el.getTotalLength();
-            el.style.strokeDasharray = length;
-            el.style.strokeDashoffset = length;
-            el.style.strokeOpacity = 1;
-            
-            setTimeout(() => {
-              requestAnimationFrame(() => {
-                el.style.transition = 'stroke-dashoffset 0.7s linear, stroke-opacity 0.4s ease';
-                el.style.strokeDashoffset = 0;
+                elements.forEach((el, index) => {
+                  const origStroke = el.getAttribute('stroke');
+                  const strokeColor = origStroke && origStroke !== 'none' ? origStroke : '#333';
+                  el.setAttribute('stroke', strokeColor);
+                  el.setAttribute('stroke-width', 2);
+                  el.classList.add('fill-animate');
+                  el.style.animationDelay = `${index * 0.05}s`;
+                  
+                  const delay = index * 50;
+                  
+                  if (el.tagName === 'path') {
+                    const length = el.getTotalLength();
+                    el.style.strokeDasharray = length;
+                    el.style.strokeDashoffset = length;
+                    el.style.strokeOpacity = 1;
+                    
+                    setTimeout(() => {
+                      requestAnimationFrame(() => {
+                        el.style.transition = 'stroke-dashoffset 0.7s linear, stroke-opacity 0.4s ease';
+                        el.style.strokeDashoffset = 0;
+                        
+                        setTimeout(() => {
+                          el.style.strokeOpacity = 0;
+                        }, 500);
+                      });
+                    }, delay);
+                  } else {
+                    el.style.strokeOpacity = 0;
+                    
+                    setTimeout(() => {
+                      requestAnimationFrame(() => {
+                        el.style.transition = 'stroke-opacity 1s ease';
+                        el.style.strokeOpacity = 1;
+                        
+                        setTimeout(() => {
+                          el.style.transition = 'stroke-opacity 1s ease';
+                          el.style.strokeOpacity = 0;
+                        }, 500);
+                      });
+                    }, delay);
+                  }
+                });
                 
-                setTimeout(() => {
-                  el.style.strokeOpacity = 0;
-                }, 500);
-              });
-            }, delay);
-          } else {
-            el.style.strokeOpacity = 0;
-            
-            setTimeout(() => {
-              requestAnimationFrame(() => {
-                el.style.transition = 'stroke-opacity 1s ease';
-                el.style.strokeOpacity = 1;
+              } else {
+                function distanceFromBottomRight(el) {
+                  const bbox = el.getBBox();
+                  const cx = bbox.x + bbox.width;
+                  const cy = bbox.y + bbox.height;
+                  const svgWidth = svg.viewBox.baseVal.width || svg.clientWidth;
+                  const svgHeight = svg.viewBox.baseVal.height || svg.clientHeight;
+                  const dx = svgWidth - cx;
+                  const dy = svgHeight - cy;
+                  return Math.sqrt(dx*dx + dy*dy);
+                }
+
+                elements.sort((a, b) => distanceFromBottomRight(a) - distanceFromBottomRight(b));
                 
-                setTimeout(() => {
-                  el.style.transition = 'stroke-opacity 1s ease';
-                  el.style.strokeOpacity = 0;
-                }, 500);
-              });
-            }, delay);
-          }
+                void svg.offsetWidth;
+
+                elements.forEach((el, index) => {
+                  el.classList.add('fill-animate');
+                  el.style.animationDelay = `${index * 0.1}s`;
+
+                  const origStroke = el.getAttribute('stroke');
+                  const strokeColor = origStroke && origStroke !== 'none' ? origStroke : '#333';
+                  el.setAttribute('stroke', strokeColor);
+                  el.setAttribute('stroke-width', 2);
+
+                  if (el.tagName === 'path') {
+                    const length = el.getTotalLength();
+                    el.style.strokeDasharray = length;
+                    el.style.strokeDashoffset = length;
+                    setTimeout(() => {
+                      el.style.transition = 'stroke-dashoffset 0.7s linear, stroke-opacity 0.6s ease';
+                      el.style.strokeDashoffset = 0;
+                      setTimeout(() => el.style.strokeOpacity = 0, 700);
+                    }, index * 100);
+                  } else {
+                    el.style.strokeOpacity = 0;
+                    setTimeout(() => {
+                      el.style.transition = 'stroke-opacity 0.7s ease';
+                      el.style.strokeOpacity = 1;
+                      setTimeout(() => el.style.strokeOpacity = 0, 700);
+                    }, index * 100);
+                  }
+                });
+              }
+            })
+            .catch(err => console.error('Error loading SVG:', err));
         });
-        
-      } else {
-        function distanceFromBottomRight(el) {
-          const bbox = el.getBBox();
-          const cx = bbox.x + bbox.width;
-          const cy = bbox.y + bbox.height;
-          const svgWidth = svg.viewBox.baseVal.width || svg.clientWidth;
-          const svgHeight = svg.viewBox.baseVal.height || svg.clientHeight;
-          const dx = svgWidth - cx;
-          const dy = svgHeight - cy;
-          return Math.sqrt(dx*dx + dy*dy);
-        }
-
-        elements.sort((a, b) => distanceFromBottomRight(a) - distanceFromBottomRight(b));
-        
-        void svg.offsetWidth;
-
-        elements.forEach((el, index) => {
-          el.classList.add('fill-animate');
-          el.style.animationDelay = `${index * 0.1}s`;
-
-          const origStroke = el.getAttribute('stroke');
-          const strokeColor = origStroke && origStroke !== 'none' ? origStroke : '#333';
-          el.setAttribute('stroke', strokeColor);
-          el.setAttribute('stroke-width', 2);
-
-          if (el.tagName === 'path') {
-            const length = el.getTotalLength();
-            el.style.strokeDasharray = length;
-            el.style.strokeDashoffset = length;
-            setTimeout(() => {
-              el.style.transition = 'stroke-dashoffset 0.7s linear, stroke-opacity 0.6s ease';
-              el.style.strokeDashoffset = 0;
-              setTimeout(() => el.style.strokeOpacity = 0, 700);
-            }, index * 100);
-          } else {
-            el.style.strokeOpacity = 0;
-            setTimeout(() => {
-              el.style.transition = 'stroke-opacity 0.7s ease';
-              el.style.strokeOpacity = 1;
-              setTimeout(() => el.style.strokeOpacity = 0, 700);
-            }, index * 100);
-          }
-        });
-      }
-    })
-    .catch(err => console.error('Error loading SVG:', err));
-});
       </script>
     </header>
   
@@ -589,6 +606,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <h2 class="texth1">Our Map</h2>
         <div id="mapContainer">
           <div id="map"></div>
+          <button id="toggle3DButton" class="textp">3D View</button>
           <button id="backButton" class="textp">← Back</button>
         </div>
       </section>
@@ -764,6 +782,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const cityMarkers = [];
         let cityPopups = [];
         const backButton = document.getElementById('backButton');
+        let activeInfoPopup = null;
 
         regions.forEach(region => {
           const popup = new maplibregl.Popup({
@@ -841,19 +860,28 @@ document.addEventListener('DOMContentLoaded', () => {
                   });
               });
 
-              let activeInfoPopup = null;
-
               map.on('click', 'points-layer', (e) => {
                 const feature = e.features[0];
                 const props = feature.properties;
 
                 if (activeInfoPopup) activeInfoPopup.remove();
-
-                const popupDiv = document.createElement('div');
+                
+                const windowWidth = window.innerWidth;
+                const popupDiv = document.createElement('div'); // Declare OUTSIDE the if blocks
                 popupDiv.className = 'markerPopup textp';
+
+                let titleFontSize;
+                if (windowWidth < 480) {
+                  titleFontSize = props.name.length > 12 ? '1.5rem' : '2rem';
+                } else if (windowWidth < 640) {
+                  titleFontSize = props.name.length > 12 ? '2rem' : '2.5rem';
+                } else {
+                  titleFontSize = props.name.length > 12 ? '2.5rem' : '3rem';
+                }
+
                 popupDiv.innerHTML = `
                   <button class="popupClose">x</button>
-                  <h3 style="font-size: ${props.name.length > 12 ? '2.3rem' : '3rem'}">${props.name || ''}</h3>
+                  <h3 style="font-size: ${titleFontSize}">${props.name || ''}</h3>
                   ${props.description || ''}<br>
                   ${props.address || ''}<br>
                   ${props.phone ? '📞 ' + props.phone + '<br>' : ''}
@@ -891,6 +919,10 @@ document.addEventListener('DOMContentLoaded', () => {
           map.getCanvas().style.cursor = '';
 
           removeAllPopups();
+          if (activeInfoPopup) {
+            activeInfoPopup.remove();
+            activeInfoPopup = null;
+          }
 
           cityMarkers.forEach(marker => marker.getElement().style.display = 'block');
 
@@ -910,6 +942,58 @@ document.addEventListener('DOMContentLoaded', () => {
             cityMarkers[index].setPopup(popup);
             cityMarkers[index].togglePopup();
           });
+        });
+        const toggle3DButton = document.getElementById('toggle3DButton');
+        let is3D = false;
+
+        toggle3DButton.addEventListener('click', () => {
+          if (!is3D) {
+            map.easeTo({
+              pitch: 120,
+              bearing: 0,
+              duration: 3000
+            });
+            toggle3DButton.textContent = '2D View';
+            is3D = true;
+          } else {
+            map.easeTo({
+              pitch: 0,
+              bearing: 0,
+              duration: 1000
+            });
+            toggle3DButton.textContent = '3D View';
+            is3D = false;
+          }
+        });
+
+        map.addLayer({
+          'id': '3d-buildings',
+          'source': 'openmaptiles',
+          'source-layer': 'building',
+          'type': 'fill-extrusion',
+          'minzoom': 14,
+          'paint': {
+            'fill-extrusion-color': '#aaa',
+            'fill-extrusion-height': [
+              'interpolate',
+              ['linear'],
+              ['zoom'],
+              15,
+              0,
+              15.05,
+              ['get', 'render_height']
+            ],
+            'fill-extrusion-base': [
+              'interpolate',
+              ['linear'],
+              ['zoom'],
+              15,
+              0,
+              15.05,
+              ['get', 'render_min_height']
+            ],
+            'fill-extrusion-opacity': 0.6
+          }
         });
       });
     </script>
