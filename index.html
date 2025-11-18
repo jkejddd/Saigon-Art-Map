@@ -122,7 +122,7 @@
           .popupClose {
             top: 5px;
             right: 5px;
-            font-size: 1rem;
+            font-size: 0.8rem;
             font-weight: 100;
             line-height: 1;
             padding: 10px;
@@ -153,7 +153,7 @@
           .popupClose {
             top: 3px;
             right: 3px;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             font-weight: 90;
             line-height: 1;
             padding: 5px;
@@ -379,12 +379,22 @@
           max-width: 1200px;
           height: 60vh;
           min-height: 300px;
+          z-index: 2;
+        }
+
+        #mapLoad {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          text-align: center;
+          z-index: 1;
+          transform: translate(-50%, -50%);
         }
 
         #backButton {
           position: absolute;
-          top: 10px;
-          right: 10px;
+          top: 2.5%;
+          right: 2.5%;
           padding: 0.5rem 1rem;
           background-color: #FFFBF2;
           border: 1px solid #ccc;
@@ -392,6 +402,7 @@
           display: none;
           color: black;
           font-style: normal;
+          z-index: 3;
         }
 
         .markerPopup {
@@ -414,7 +425,22 @@
           right: 10px;
           border: none;
           background: transparent;
-          font-size: 1.5rem;
+          font-size: 1rem;
+          cursor: pointer;
+          font-family: Arial, Helvetica, sans-serif;
+          font-weight: 100;
+          line-height: 1;
+          padding: 10px;
+          color: black;
+        }
+
+        .popupClose:hover {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          border: none;
+          background: #eee;
+          font-size: 1rem;
           cursor: pointer;
           font-family: Arial, Helvetica, sans-serif;
           font-weight: 100;
@@ -432,6 +458,7 @@
           z-index: 1;
           overflow: hidden;
           opacity: 0.5;
+          will-change: transform;
         }
 
         #roads svg {
@@ -451,6 +478,7 @@
           animation-duration: 0.7s;
           animation-fill-mode: forwards;
           animation-timing-function: ease;
+          will-change: opacity;
         }
 
         .above {
@@ -459,13 +487,13 @@
 
         #toggle3DButton {
           position: absolute;
-          top: 10px;
-          left: 10px;
+          top: 2.5%;
+          left: 2.5%;
           padding: 0.5rem 1rem;
           background-color: #FFFBF2;
           border: 1px solid #ccc;
           cursor: pointer;
-          z-index: 1000;
+          z-index: 4;
           color: black;
           font-style: normal;
           font-family: "Mozilla Text", "inter", system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -497,123 +525,79 @@
           const isMobile = window.innerWidth <= 768 || 
             /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-          fetch('roads.svg')
-            .then(res => res.text())
-            .then(svgText => {
-              const container = document.getElementById('roads');
-              container.innerHTML = svgText;
+          const loadSVG = () => {
+            fetch('roads.svg')
+              .then(res => res.text())
+              .then(svgText => {
+                const container = document.getElementById('roads');
+                container.innerHTML = svgText;
 
-              const svg = container.querySelector('svg');
-              svg.setAttribute('preserveAspectRatio', 'xMaxYMax meet');
-              svg.style.display = 'block';
-              svg.style.overflow = 'hidden';
+                const svg = container.querySelector('svg');
+                svg.setAttribute('preserveAspectRatio', 'xMaxYMax meet');
+                svg.style.display = 'block';
+                svg.style.overflow = 'hidden';
 
-              const elements = Array.from(svg.querySelectorAll('path, rect, polygon, ellipse, circle'));
+                const elements = Array.from(svg.querySelectorAll('path, rect, polygon, ellipse, circle'));
 
-              if (isMobile) {
-                function distanceFromBottomRight(el) {
-                  const bbox = el.getBBox();
-                  const cx = bbox.x + bbox.width;
-                  const cy = bbox.y + bbox.height;
-                  const svgWidth = svg.viewBox.baseVal.width || svg.clientWidth;
-                  const svgHeight = svg.viewBox.baseVal.height || svg.clientHeight;
-                  const dx = svgWidth - cx;
-                  const dy = svgHeight - cy;
-                  return Math.sqrt(dx*dx + dy*dy);
-                }
-
-                elements.sort((a, b) => distanceFromBottomRight(a) - distanceFromBottomRight(b));
-
-                void svg.offsetWidth;
-
-                elements.forEach((el, index) => {
-                  const origStroke = el.getAttribute('stroke');
-                  const strokeColor = origStroke && origStroke !== 'none' ? origStroke : '#333';
-                  el.setAttribute('stroke', strokeColor);
-                  el.setAttribute('stroke-width', 2);
-                  el.classList.add('fill-animate');
-                  el.style.animationDelay = `${index * 0.05}s`;
-                  
-                  const delay = index * 50;
-                  
-                  if (el.tagName === 'path') {
-                    const length = el.getTotalLength();
-                    el.style.strokeDasharray = length;
-                    el.style.strokeDashoffset = length;
-                    el.style.strokeOpacity = 1;
-                    
-                    setTimeout(() => {
-                      requestAnimationFrame(() => {
-                        el.style.transition = 'stroke-dashoffset 0.7s linear, stroke-opacity 0.4s ease';
-                        el.style.strokeDashoffset = 0;
-                        
-                        setTimeout(() => {
-                          el.style.strokeOpacity = 0;
-                        }, 500);
-                      });
-                    }, delay);
-                  } else {
-                    el.style.strokeOpacity = 0;
-                    
-                    setTimeout(() => {
-                      requestAnimationFrame(() => {
-                        el.style.transition = 'stroke-opacity 1s ease';
-                        el.style.strokeOpacity = 1;
-                        
-                        setTimeout(() => {
-                          el.style.transition = 'stroke-opacity 1s ease';
-                          el.style.strokeOpacity = 0;
-                        }, 500);
-                      });
-                    }, delay);
-                  }
-                });
+                const svgWidth = svg.viewBox.baseVal.width || svg.clientWidth;
+                const svgHeight = svg.viewBox.baseVal.height || svg.clientHeight;
                 
-              } else {
-                function distanceFromBottomRight(el) {
+                const distanceFromBottomRight = (el) => {
                   const bbox = el.getBBox();
                   const cx = bbox.x + bbox.width;
                   const cy = bbox.y + bbox.height;
-                  const svgWidth = svg.viewBox.baseVal.width || svg.clientWidth;
-                  const svgHeight = svg.viewBox.baseVal.height || svg.clientHeight;
                   const dx = svgWidth - cx;
                   const dy = svgHeight - cy;
                   return Math.sqrt(dx*dx + dy*dy);
-                }
+                };
 
                 elements.sort((a, b) => distanceFromBottomRight(a) - distanceFromBottomRight(b));
-              
 
-                elements.forEach((el, index) => {
-                  el.classList.add('fill-animate');
-                  el.style.animationDelay = `${index * 0.1}s`;
-
-                  const origStroke = el.getAttribute('stroke');
-                  const strokeColor = origStroke && origStroke !== 'none' ? origStroke : '#333';
-                  el.setAttribute('stroke', strokeColor);
-                  el.setAttribute('stroke-width', 2);
-
-                  if (el.tagName === 'path') {
-                    const length = el.getTotalLength();
-                    el.style.strokeDasharray = length;
-                    el.style.strokeDashoffset = length;
-                    setTimeout(() => {
-                      el.style.transition = 'stroke-dashoffset 0.7s linear, stroke-opacity 0.6s ease';
-                      el.style.strokeDashoffset = 0;
-                      setTimeout(() => el.style.strokeOpacity = 0, 700);
-                    }, index * 100);
-                  } else {
-                    el.style.strokeOpacity = 0;
-                    setTimeout(() => {
-                      el.style.transition = 'stroke-opacity 0.7s ease';
+                requestAnimationFrame(() => {
+                  elements.forEach((el, index) => {
+                    const origStroke = el.getAttribute('stroke');
+                    const strokeColor = origStroke && origStroke !== 'none' ? origStroke : '#333';
+                    el.setAttribute('stroke', strokeColor);
+                    el.setAttribute('stroke-width', 2);
+                    el.classList.add('fill-animate');
+                    
+                    const delay = isMobile ? index * 50 : index * 100;
+                    el.style.animationDelay = `${isMobile ? index * 0.05 : index * 0.1}s`;
+                    
+                    if (el.tagName === 'path') {
+                      const length = el.getTotalLength();
+                      el.style.strokeDasharray = length;
+                      el.style.strokeDashoffset = length;
                       el.style.strokeOpacity = 1;
-                      setTimeout(() => el.style.strokeOpacity = 0, 700);
-                    }, index * 100);
-                  }
+                      
+                      setTimeout(() => {
+                        requestAnimationFrame(() => {
+                          el.style.transition = 'stroke-dashoffset 0.7s linear, stroke-opacity 0.4s ease';
+                          el.style.strokeDashoffset = 0;
+                          setTimeout(() => el.style.strokeOpacity = 0, isMobile ? 500 : 700);
+                        });
+                      }, delay);
+                    } else {
+                      el.style.strokeOpacity = 0;
+                      setTimeout(() => {
+                        requestAnimationFrame(() => {
+                          el.style.transition = `stroke-opacity ${isMobile ? '1s' : '0.7s'} ease`;
+                          el.style.strokeOpacity = 1;
+                          setTimeout(() => el.style.strokeOpacity = 0, isMobile ? 500 : 700);
+                        });
+                      }, delay);
+                    }
+                  });
                 });
-              }
-            })
-            .catch(err => console.error('Error loading SVG:', err));
+              })
+              .catch(err => console.error('Error loading SVG:', err));
+          };
+
+          if ('requestIdleCallback' in window) {
+            requestIdleCallback(loadSVG, { timeout: 2000 });
+          } else {
+            setTimeout(loadSVG, 100);
+          }
         });
       </script>
     </header>
@@ -623,6 +607,7 @@
         <h2 class="texth1">Our Map</h2>
         <div id="mapContainer">
           <div id="map"></div>
+          <h3 id="mapLoad">Please wait for the map to load...</h3>
           <button id="toggle3DButton" class="textp">3D View</button>
           <button id="backButton" class="textp">← Back</button>
         </div>
@@ -689,7 +674,7 @@
         <p id="form-status" class="status-message"></p>
         <br><br>
         <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async></script>
-        <script defer>
+        <script>
           document.addEventListener("DOMContentLoaded", () => {
             const form = document.getElementById('artForm');
             form.addEventListener('submit', async e => {
@@ -730,13 +715,12 @@
                 });
               
                 const responseText = await response.text();
-                console.log('Response status:', response.status);
-                console.log('Response text:', responseText);
               
                 if (response.ok) {
                   status.textContent = '✅ Submitted successfully!';
                   status.classList.add('success');
                   form.reset();
+                  window.turnstile.reset();
                 } else {
                   status.textContent = '❌ Error: ' + responseText;
                   status.classList.add('error');
@@ -768,8 +752,24 @@
           container: 'map',
           style: 'https://tiles.openfreemap.org/styles/liberty',
           center: [106.7009, 10.7769],
-          zoom: 8
+          zoom: 8,
+          maxTileCacheSize: 50,
+          preserveDrawingBuffer: false,
+          refreshExpiredTiles: false
         });
+
+        const geojsonCache = {};
+        
+        const preloadGeoJSON = async (filename) => {
+          if (!geojsonCache[filename]) {
+            try {
+              const response = await fetch(filename);
+              geojsonCache[filename] = await response.json();
+            } catch (error) {
+              console.error(`Error preloading ${filename}:`, error);
+            }
+          }
+        };
 
         map.on('load', () => {
           map.addSource('hcmcOverlay', {
@@ -797,6 +797,8 @@
             {name: "Vũng Tàu", coords: [107.1362, 10.4114], zoom: 11, file: "vungtau.geojson"}
           ];
 
+          regions.forEach(region => preloadGeoJSON(region.file));
+
           const cityMarkers = [];
           let cityPopups = [];
           const backButton = document.getElementById('backButton');
@@ -821,7 +823,6 @@
             cityMarker.togglePopup();
 
             cityMarker.getElement().addEventListener('click', async () => {
-              console.log('City marker clicked:', region.name);
               map.flyTo({ center: region.coords, zoom: region.zoom });
 
               cityMarkers.forEach(m => m.getElement().style.display = 'none');
@@ -829,54 +830,94 @@
 
               cityPopups.forEach(p => p.remove());
               cityPopups = [];
-
               cityMarker.setPopup(null);
 
               if (map.getLayer('points-layer')) map.removeLayer('points-layer');
               if (map.getSource('points')) map.removeSource('points');
 
-              console.log('Fetching GeoJSON:', region.file);
-              
               try {
-                const response = await fetch(region.file);
-                const geojsonData = await response.json();
-                console.log('GeoJSON loaded:', geojsonData);
+                const geojsonData = geojsonCache[region.file] || await (async () => {
+                  const response = await fetch(region.file);
+                  const data = await response.json();
+                  geojsonCache[region.file] = data;
+                  return data;
+                })();
 
-                geojsonData.features.forEach(feature => {
-                  const { coordinates } = feature.geometry;
-                    const { type, title } = feature.properties;
-
-                    if (map.getSource('points')){
-                      map.getSource('points', {
-                        data: geojsonData
-                      });
-                    } else{
-                      map.addSource('points', {
-                        type: 'geojson',
-                        data: geojsonData
-                      });
-                    }
-
-                    map.addLayer({
-                      id: 'points-layer',
-                      type: 'circle',
-                      source: 'points',
-                      paint: {
-                        'circle-radius': 10,
-                        'circle-color': [
-                          'match',
-                          ['get', 'type'],
-                          'gallery', '#e74c3c',
-                          'cafe',    '#3498db',
-                          'museum',  '#9b59b6',
-                          'studio',  '#f1c40f',
-                          '#95a5a6'
-                        ],
-                        'circle-stroke-color': '#fff',
-                        'circle-stroke-width': 3
-                      }
-                    });
+                map.addSource('points', {
+                  type: 'geojson',
+                  data: geojsonData,
+                  cluster: geojsonData.features.length > 50,
+                  clusterMaxZoom: 14,
+                  clusterRadius: 50
                 });
+
+                map.addLayer({
+                  id: 'points-layer',
+                  type: 'circle',
+                  source: 'points',
+                  filter: ['!', ['has', 'point_count']],
+                  paint: {
+                    'circle-radius': 10,
+                    'circle-color': [
+                      'match',
+                      ['get', 'type'],
+                      'gallery', '#e74c3c',
+                      'cafe',    '#3498db',
+                      'museum',  '#9b59b6',
+                      'studio',  '#f1c40f',
+                      '#95a5a6'
+                    ],
+                    'circle-stroke-color': '#fff',
+                    'circle-stroke-width': 3
+                  }
+                });
+
+                if (geojsonData.features.length > 50) {
+                  map.addLayer({
+                    id: 'clusters',
+                    type: 'circle',
+                    source: 'points',
+                    filter: ['has', 'point_count'],
+                    paint: {
+                      'circle-color': '#51bbd6',
+                      'circle-radius': [
+                        'step',
+                        ['get', 'point_count'],
+                        20, 10,
+                        30, 30,
+                        40
+                      ]
+                    }
+                  });
+
+                  map.addLayer({
+                    id: 'cluster-count',
+                    type: 'symbol',
+                    source: 'points',
+                    filter: ['has', 'point_count'],
+                    layout: {
+                      'text-field': '{point_count_abbreviated}',
+                      'text-size': 12
+                    }
+                  });
+
+                  map.on('click', 'clusters', (e) => {
+                    const features = map.queryRenderedFeatures(e.point, {
+                      layers: ['clusters']
+                    });
+                    const clusterId = features[0].properties.cluster_id;
+                    map.getSource('points').getClusterExpansionZoom(
+                      clusterId,
+                      (err, zoom) => {
+                        if (err) return;
+                        map.easeTo({
+                          center: features[0].geometry.coordinates,
+                          zoom: zoom
+                        });
+                      }
+                    );
+                  });
+                }
 
                 map.on('click', 'points-layer', (e) => {
                   const feature = e.features[0];
@@ -888,7 +929,7 @@
                   popupDiv.className = 'markerPopup textp';
 
                   popupDiv.innerHTML = `
-                    <button class="popupClose">x</button>
+                    <button class="popupClose">×</button>
                     <h3>${props.name || ''}</h3>
                     ${props.description || ''}<br>
                     ${props.address || ''}<br>
@@ -908,6 +949,15 @@
                     remove: () => popupDiv.remove()
                   };
                 });
+
+                map.on('mouseenter', 'points-layer', () => {
+                  map.getCanvas().style.cursor = 'pointer';
+                });
+
+                map.on('mouseleave', 'points-layer', () => {
+                  map.getCanvas().style.cursor = '';
+                });
+
               } catch(error) {
                 console.error('Error loading GeoJSON:', error);
               }
@@ -922,6 +972,8 @@
 
           backButton.addEventListener('click', () => {
             if (map.getLayer('points-layer')) map.removeLayer('points-layer');
+            if (map.getLayer('clusters')) map.removeLayer('clusters');
+            if (map.getLayer('cluster-count')) map.removeLayer('cluster-count');
             if (map.getSource('points')) map.removeSource('points');
 
             map.getCanvas().style.cursor = '';
@@ -951,15 +1003,16 @@
               cityMarkers[index].togglePopup();
             });
           });
+
           const toggle3DButton = document.getElementById('toggle3DButton');
           let is3D = false;
 
           toggle3DButton.addEventListener('click', () => {
             if (!is3D) {
               map.easeTo({
-                pitch: 120,
+                pitch: 60,
                 bearing: 0,
-                duration: 3000
+                duration: 1500
               });
               toggle3DButton.textContent = '2D View';
               is3D = true;
