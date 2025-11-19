@@ -759,6 +759,17 @@
         });
 
         const geojsonCache = {};
+        
+        const preloadGeoJSON = async (filename) => {
+          if (!geojsonCache[filename]) {
+            try {
+              const response = await fetch(filename);
+              geojsonCache[filename] = await response.json();
+            } catch (error) {
+              console.error(`Error preloading ${filename}:`, error);
+            }
+          }
+        };
 
         map.on('load', () => {
           map.addSource('hcmcOverlay', {
@@ -825,7 +836,7 @@
               if (map.getSource('points')) map.removeSource('points');
 
               try {
-                const geojsonData = geojsonCache[region.file] || await (async () => {
+                  const geojsonData = geojsonCache[region.file] || await (async () => {
                   const response = await fetch(region.file);
                   const data = await response.json();
                   geojsonCache[region.file] = data;
