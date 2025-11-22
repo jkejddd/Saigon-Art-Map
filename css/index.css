@@ -144,6 +144,8 @@
     }
 
     .logo {
+        width: 50vw;
+        height: auto;
         animation: fadeIn 2.5s forwards ease;
     }
 
