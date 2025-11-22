@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
         /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
     const loadSVG = () => {
+        console.log('Loading SVG...');
         fetch('roads.svg')
             .then(res => res.text())
             .then(svgText => {
@@ -10,11 +11,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 container.innerHTML = svgText;
 
                 const svg = container.querySelector('svg');
+                if (!svg) {
+                    console.error('SVG not found in response');
+                    return;
+                }
                 svg.setAttribute('preserveAspectRatio', 'xMaxYMax meet');
                 svg.style.display = 'block';
                 svg.style.overflow = 'hidden';
 
                 const elements = Array.from(svg.querySelectorAll('path, rect, polygon, ellipse, circle'));
+                console.log(`Found ${elements.length} elements to animate`);
 
                 const svgWidth = svg.viewBox.baseVal.width || svg.clientWidth;
                 const svgHeight = svg.viewBox.baseVal.height || svg.clientHeight;
@@ -28,47 +34,80 @@ document.addEventListener('DOMContentLoaded', () => {
                     return Math.sqrt(dx * dx + dy * dy);
                 };
 
-                const elementsWithDistance = elements.map(el => ({
-                    el,
-                    distance: distanceFromBottomRight(el)
-                }));
+                const elementsWithData = elements.map(el => {
+                    const distance = distanceFromBottomRight(el);
+                    let length = 0;
+                    if (el.tagName === 'path') {
+                        length = el.getTotalLength();
+                    }
+                    return { el, distance, length };
+                });
 
-                elementsWithDistance.sort((a, b) => a.distance - b.distance);
+                elementsWithData.sort((a, b) => a.distance - b.distance);
 
                 requestAnimationFrame(() => {
-                    elementsWithDistance.forEach(({ el }, index) => {
+                    elementsWithData.forEach(({ el, length }) => {
                         const origStroke = el.getAttribute('stroke');
                         const strokeColor = origStroke && origStroke !== 'none' ? origStroke : '#333';
-                        el.setAttribute('stroke', strokeColor);
-                        el.setAttribute('stroke-width', 2);
-                        el.classList.add('fill-animate');
 
-                        const delay = isMobile ? index * 50 : index * 100;
-                        el.style.animationDelay = `${isMobile ? index * 0.05 : index * 0.1}s`;
+                        el.style.stroke = strokeColor;
+                        el.style.strokeWidth = '2px';
+                        el.style.transition = 'none';
+
+                        el.style.fillOpacity = '0';
 
                         if (el.tagName === 'path') {
-                            const length = el.getTotalLength();
                             el.style.strokeDasharray = length;
                             el.style.strokeDashoffset = length;
-                            el.style.strokeOpacity = 1;
-
-                            setTimeout(() => {
-                                requestAnimationFrame(() => {
-                                    el.style.transition = 'stroke-dashoffset 0.7s linear, stroke-opacity 0.4s ease';
-                                    el.style.strokeDashoffset = 0;
-                                    setTimeout(() => el.style.strokeOpacity = 0, isMobile ? 500 : 700);
-                                });
-                            }, delay);
+                            el.style.strokeOpacity = '1';
                         } else {
-                            el.style.strokeOpacity = 0;
-                            setTimeout(() => {
-                                requestAnimationFrame(() => {
-                                    el.style.transition = `stroke-opacity ${isMobile ? '1s' : '0.7s'} ease`;
-                                    el.style.strokeOpacity = 1;
-                                    setTimeout(() => el.style.strokeOpacity = 0, isMobile ? 500 : 700);
-                                });
-                            }, delay);
+                            el.style.strokeOpacity = '0';
                         }
+                    });
+
+                    requestAnimationFrame(() => {
+                        elementsWithData.forEach(({ el, length }, index) => {
+                            const delay = isMobile ? index * 0.05 : index * 0.1;
+
+                            if (el.tagName === 'path') {
+
+                                el.animate(
+                                    { strokeDashoffset: [length, 0] },
+                                    { duration: 700, delay: delay * 1000, fill: 'forwards', easing: 'linear' }
+                                );
+
+                                el.animate(
+                                    { fillOpacity: [0, 1] },
+                                    { duration: 500, delay: (delay + 0.5) * 1000, fill: 'forwards', easing: 'ease-out' }
+                                );
+
+                                const fadeDelay = (delay + 0.7 + (isMobile ? 0.5 : 0.7)) * 1000;
+
+                                el.animate(
+                                    { strokeOpacity: [1, 0] },
+                                    { duration: 400, delay: fadeDelay, fill: 'forwards', easing: 'ease' }
+                                );
+
+                            } else {
+                                const duration = (isMobile ? 1 : 0.7) * 1000;
+                                const hold = (isMobile ? 500 : 700);
+
+                                el.animate(
+                                    { strokeOpacity: [0, 1] },
+                                    { duration: duration, delay: delay * 1000, fill: 'forwards', easing: 'ease' }
+                                );
+                                el.animate(
+                                    { fillOpacity: [0, 1] },
+                                    { duration: duration, delay: delay * 1000, fill: 'forwards', easing: 'ease' }
+                                );
+
+                                const fadeOutDelay = (delay * 1000) + hold;
+                                el.animate(
+                                    { strokeOpacity: [1, 0] },
+                                    { duration: duration, delay: fadeOutDelay, fill: 'forwards', easing: 'ease' }
+                                );
+                            }
+                        });
                     });
                 });
             })
