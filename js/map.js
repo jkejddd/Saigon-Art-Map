@@ -334,12 +334,20 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                initMap();
-                observer.disconnect();
+        const isIntersecting = entries.some(entry => entry.isIntersecting);
+        if (isIntersecting) {
+            if ('requestIdleCallback' in window) {
+                requestIdleCallback(() => {
+                    initMap();
+                    observer.disconnect();
+                });
+            } else {
+                requestAnimationFrame(() => {
+                    initMap();
+                    observer.disconnect();
+                });
             }
-        });
+        }
     }, {
         rootMargin: '200px'
     });
@@ -347,6 +355,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (mapSection) {
         observer.observe(mapSection);
     } else {
-        initMap();
+        if ('requestIdleCallback' in window) {
+            requestIdleCallback(initMap);
+        } else {
+            setTimeout(initMap, 100);
+        }
     }
 });
