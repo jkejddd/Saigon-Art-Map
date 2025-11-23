@@ -68,26 +68,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const setupAnimations = (data) => {
                     data.sort((a, b) => a.distance - b.distance);
-                    requestAnimationFrame(() => {
-                        data.forEach(({ el, length }, index) => {
-                            const origStroke = el.getAttribute('stroke');
-                            const strokeColor = origStroke && origStroke !== 'none' ? origStroke : '#333';
 
-                            el.style.stroke = strokeColor;
-                            el.style.strokeWidth = '2px';
+                    const animationChunkSize = 50;
+                    let animationIndex = 0;
 
-                            if (el.tagName === 'path') {
-                                el.style.setProperty('--length', length + 'px');
-                            }
-
-                            const delay = isMobile ? index * 0.05 : index * 0.1;
-                            el.style.setProperty('--delay', delay + 's');
-                        });
+                    const processAnimationChunk = () => {
+                        const end = Math.min(animationIndex + animationChunkSize, data.length);
 
                         requestAnimationFrame(() => {
-                            document.body.classList.add('animate-roads');
+                            for (let i = animationIndex; i < end; i++) {
+                                const { el, length } = data[i];
+                                const origStroke = el.getAttribute('stroke');
+                                const strokeColor = origStroke && origStroke !== 'none' ? origStroke : '#333';
+
+                                el.style.stroke = strokeColor;
+                                el.style.strokeWidth = '2px';
+
+                                if (el.tagName === 'path') {
+                                    el.style.setProperty('--length', length + 'px');
+                                }
+
+                                const delay = isMobile ? i * 0.05 : i * 0.1;
+                                el.style.setProperty('--delay', delay + 's');
+                            }
+
+                            animationIndex = end;
+
+                            if (animationIndex < data.length) {
+                                if ('requestIdleCallback' in window) {
+                                    requestIdleCallback(processAnimationChunk);
+                                } else {
+                                    setTimeout(processAnimationChunk, 0);
+                                }
+                            } else {
+                                requestAnimationFrame(() => {
+                                    document.body.classList.add('animate-roads');
+                                });
+                            }
                         });
-                    });
+                    };
+
+                    processAnimationChunk();
                 };
 
                 processChunk();
@@ -114,11 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
         status.textContent = 'Submitting...';
         status.className = 'status-message show';
 
-        const token = window.turnstile.getResponse();
-        if (!token) {
-            status.textContent = 'Please complete the CAPTCHA.';
-            return;
-        }
+
 
         const data = {
             gname: form.gname.value,
@@ -128,8 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
             phonenum: form.phonenum.value,
             website: form.website.value,
             typeofplace: form['typeofplace'].value,
-            details: form.details.value,
-            'cf-turnstile-response': token
+            details: form.details.value
         };
 
         const params = new URLSearchParams();
@@ -150,7 +166,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 status.textContent = '✅ Submitted successfully!';
                 status.classList.add('success');
                 form.reset();
-                window.turnstile.reset();
             } else {
                 status.textContent = '❌ Error: ' + responseText;
                 status.classList.add('error');
