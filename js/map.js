@@ -67,7 +67,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 { name: "Vũng Tàu", coords: [107.1362, 10.4114], zoom: 11, file: "vungtau.geojson" }
             ];
 
-            regions.forEach(region => preloadGeoJSON(region.file));
+            if ('requestIdleCallback' in window) {
+                requestIdleCallback(() => regions.forEach(region => preloadGeoJSON(region.file)));
+            } else {
+                setTimeout(() => regions.forEach(region => preloadGeoJSON(region.file)), 1000);
+            }
 
             const cityMarkers = [];
             let cityPopups = [];
@@ -200,23 +204,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
                             const eventListeners = new Map();
 
-                            function addCleanableListener(element, event, handler) {
-                                element.addEventListener(event, handler);
-                                if (!eventListeners.has(element)) {
-                                    eventListeners.set(element, []);
-                                }
-                                eventListeners.get(element).push({ event, handler });
-                            }
-
-                            function cleanupListeners() {
-                                eventListeners.forEach((listeners, element) => {
-                                    listeners.forEach(({ event, handler }) => {
-                                        element.removeEventListener(event, handler);
-                                    });
-                                });
-                                eventListeners.clear();
-                            }
-
                             popupDiv.innerHTML = `
                     <button class="popupClose">×</button>
                     <h3>${props.name || ''}</h3>
@@ -300,6 +287,39 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                     toggle3DButton.textContent = '2D View';
                     is3D = true;
+
+                    if (!map.getLayer('3d-buildings')) {
+                        map.addLayer({
+                            'id': '3d-buildings',
+                            'source': 'openmaptiles',
+                            'source-layer': 'building',
+                            'type': 'fill-extrusion',
+                            'minzoom': 14,
+                            'paint': {
+                                'fill-extrusion-color': '#aaa',
+                                'fill-extrusion-height': [
+                                    'interpolate',
+                                    ['linear'],
+                                    ['zoom'],
+                                    15,
+                                    0,
+                                    15.05,
+                                    ['get', 'render_height']
+                                ],
+                                'fill-extrusion-base': [
+                                    'interpolate',
+                                    ['linear'],
+                                    ['zoom'],
+                                    15,
+                                    0,
+                                    15.05,
+                                    ['get', 'render_min_height']
+                                ],
+                                'fill-extrusion-opacity': 0.6
+                            }
+                        });
+                    }
+
                 } else {
                     map.easeTo({
                         pitch: 0,
@@ -308,36 +328,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                     toggle3DButton.textContent = '3D View';
                     is3D = false;
-                }
-            });
-
-            map.addLayer({
-                'id': '3d-buildings',
-                'source': 'openmaptiles',
-                'source-layer': 'building',
-                'type': 'fill-extrusion',
-                'minzoom': 14,
-                'paint': {
-                    'fill-extrusion-color': '#aaa',
-                    'fill-extrusion-height': [
-                        'interpolate',
-                        ['linear'],
-                        ['zoom'],
-                        15,
-                        0,
-                        15.05,
-                        ['get', 'render_height']
-                    ],
-                    'fill-extrusion-base': [
-                        'interpolate',
-                        ['linear'],
-                        ['zoom'],
-                        15,
-                        0,
-                        15.05,
-                        ['get', 'render_min_height']
-                    ],
-                    'fill-extrusion-opacity': 0.6
                 }
             });
         });
