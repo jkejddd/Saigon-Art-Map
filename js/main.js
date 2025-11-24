@@ -78,10 +78,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         requestAnimationFrame(() => {
                             for (let i = animationIndex; i < end; i++) {
                                 const { el, length } = data[i];
-                                const origStroke = el.getAttribute('stroke');
-                                const strokeColor = origStroke && origStroke !== 'none' ? origStroke : '#333';
+                                const strokeColor = '#E76F51';
+                                const fillColor = '#E76F51';
 
                                 el.style.stroke = strokeColor;
+                                el.style.fill = fillColor;
                                 el.style.strokeWidth = '2px';
 
                                 if (el.tagName === 'path') {
