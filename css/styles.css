@@ -151,9 +151,6 @@ h3 {
     max-width: 500px;
     height: auto;
     animation: fadeIn 2.5s forwards ease;
-    background-color: #FBF2EA;
-    padding: 1rem;
-    box-shadow: 0 0 20px 20px #FBF2EA;
 }
 
 @keyframes fadeIn {
@@ -178,10 +175,6 @@ h3 {
     align-items: center;
     opacity: 0.7;
     transition: opacity 0.5s ease, transform 0.5s ease;
-    background-color: #FBF2EA;
-    padding: 10px;
-    opacity: 1;
-    box-shadow: 0 0 20px 20px #FBF2EA;
 }
 
 .scroll-hint.hidden {
@@ -435,6 +428,54 @@ select {
     background: #eee;
 }
 
+.map-legend {
+    position: absolute;
+    top: 80px;
+    /* Below the Back button */
+    right: 2.5%;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    z-index: 5;
+    display: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(4px);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 3px;
+    font-size: 0.75rem;
+    line-height: 1;
+}
+
+.legend-item:last-child {
+    margin-bottom: 0;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+}
+
+@media (max-width: 568px) {
+    .map-legend {
+        top: 70px;
+        right: 10px;
+        padding: 6px;
+    }
+
+    .legend-item {
+        font-size: 0.7rem;
+    }
+}
+
 #roads {
     position: absolute;
     bottom: 0;
@@ -500,7 +541,7 @@ select {
 #roads svg path {
     stroke-dasharray: var(--length);
     stroke-dashoffset: var(--length);
-    fill: #E76F51;
+    fill: #EEE;
     fill-opacity: 0;
     stroke-opacity: 1;
     will-change: stroke-dashoffset, fill-opacity, stroke-opacity;
@@ -514,7 +555,7 @@ select {
 }
 
 #roads svg :not(path) {
-    fill: #E76F51;
+    fill: #EEE;
     fill-opacity: 0;
     stroke-opacity: 0;
     will-change: fill-opacity, stroke-opacity;
