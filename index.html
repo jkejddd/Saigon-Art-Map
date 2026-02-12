@@ -24,7 +24,9 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:opsz@14..32&family=Mozilla+Text&family=Roboto+Flex:opsz,wdth,wght,GRAD@8..144,44,415,80&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:opsz@14..32&family=Mozilla+Text&family=Roboto+Flex:opsz,wdth,wght,GRAD@8..144,44,415,80&display=swap"
+    rel="stylesheet">
 
   <link rel="preload" href="https://unpkg.com/maplibre-gl@^5.12.0/dist/maplibre-gl.css" as="style"
     onload="this.onload=null;this.rel='stylesheet'">
@@ -61,6 +63,17 @@
         <h3 id="mapLoad">Please wait for the map to load...</h3>
         <button id="toggle3DButton" class="textp">3D View</button>
         <button id="backButton" class="textp">← Back</button>
+        <div id="mapLegend" class="map-legend textp">
+          <div class="legend-item"><span class="dot" style="background: #E53935;"></span> Gallery</div>
+          <div class="legend-item"><span class="dot" style="background: #FB8C00;"></span> Art Space</div>
+          <div class="legend-item"><span class="dot" style="background: #43A047;"></span> Museum</div>
+          <div class="legend-item"><span class="dot" style="background: #03A9F4;"></span> Publisher</div>
+          <div class="legend-item"><span class="dot" style="background: #3F51B5;"></span> F&B</div>
+          <div class="legend-item"><span class="dot" style="background: #9C27B0;"></span> Art Class</div>
+          <div class="legend-item"><span class="dot" style="background: #009688;"></span> Art Studio</div>
+          <div class="legend-item"><span class="dot" style="background: #FBC02D;"></span> Art Shop</div>
+          <div class="legend-item"><span class="dot" style="background: #6D4C41;"></span> Public Display</div>
+        </div>
       </div>
     </section>
 
