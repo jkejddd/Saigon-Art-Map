@@ -100,7 +100,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     map.flyTo({ center: region.coords, zoom: region.zoom });
 
                     cityMarkers.forEach(m => m.getElement().style.display = 'none');
+                    const mapLegend = document.getElementById('mapLegend');
                     backButton.style.display = 'block';
+                    if (mapLegend) mapLegend.style.display = 'block';
 
                     cityPopups.forEach(p => p.remove());
                     cityPopups = [];
@@ -135,11 +137,16 @@ document.addEventListener('DOMContentLoaded', () => {
                                 'circle-color': [
                                     'match',
                                     ['get', 'type'],
-                                    'gallery', '#e74c3c',
-                                    'cafe', '#3498db',
-                                    'museum', '#9b59b6',
-                                    'studio', '#f1c40f',
-                                    '#95a5a6'
+                                    '2', '#E53935', // Gallery (Red)
+                                    '5', '#FB8C00', // Art Space (Orange)
+                                    '3', '#43A047', // Museum (Green)
+                                    '1', '#03A9F4', // Publisher (Light Blue)
+                                    '6', '#3F51B5', // F&B (Indigo)
+                                    '7', '#9C27B0', // Art Class (Purple)
+                                    '8', '#009688', // Art Studio (Teal)
+                                    '4', '#FBC02D', // Art Shop (Gold)
+                                    '9', '#6D4C41', // Public Display (Brown)
+                                    '#ccc'
                                 ],
                                 'circle-stroke-color': '#fff',
                                 'circle-stroke-width': 3
@@ -260,7 +267,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 cityMarkers.forEach(marker => marker.getElement().style.display = 'block');
                 map.flyTo({ center: [106.7009, 10.7769], zoom: 8 });
+                const mapLegend = document.getElementById('mapLegend');
                 backButton.style.display = 'none';
+                if (mapLegend) mapLegend.style.display = 'none';
 
                 regions.forEach((region, index) => {
                     const popup = new maplibregl.Popup({
