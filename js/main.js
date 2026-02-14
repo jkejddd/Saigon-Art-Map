@@ -126,36 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const roadsContainer = document.getElementById('roads');
     const scrollHint = document.querySelector('.scroll-hint');
 
-    if (roadsContainer) {
-        roadsContainer.style.transformOrigin = 'bottom right';
-        roadsContainer.style.transition = 'transform 0.1s ease-out';
-    }
 
-    let ticking = false;
-    window.addEventListener('scroll', () => {
-        if (!ticking) {
-            window.requestAnimationFrame(() => {
-                const scrollY = window.scrollY;
-                const viewportHeight = window.innerHeight;
-                const threshold = viewportHeight * 0.1;
-
-                let scale = 1 - (scrollY * 0.0001);
-
-                if (scrollY > threshold) {
-                    scale -= (scrollY - threshold) * 0.0005;
-                }
-
-                scale = Math.max(0.5, scale);
-
-                if (roadsContainer) {
-                    roadsContainer.style.transform = `scale(${scale})`;
-                }
-
-                ticking = false;
-            });
-            ticking = true;
-        }
-    });
 });
 
 document.addEventListener("DOMContentLoaded", () => {
