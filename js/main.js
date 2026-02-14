@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', () => {
         /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
     const loadSVG = () => {
-        console.log('Loading SVG...');
         fetch('roads.svg')
             .then(res => res.text())
             .then(svgText => {
@@ -17,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
 
-                svg.setAttribute('preserveAspectRatio', 'xMaxYMax meet');
+                svg.setAttribute('preserveAspectRatio', 'xMaxYMax slice');
                 svg.style.display = 'block';
                 svg.style.overflow = 'hidden';
 
@@ -79,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             for (let i = animationIndex; i < end; i++) {
                                 const { el, length } = data[i];
                                 const strokeColor = '#E76F51';
-                                const fillColor = '#E76F51';
+                                const fillColor = '#EEE';
 
                                 el.style.stroke = strokeColor;
                                 el.style.fill = fillColor;
@@ -123,6 +122,40 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         setTimeout(loadSVG, 100);
     }
+
+    const roadsContainer = document.getElementById('roads');
+    const scrollHint = document.querySelector('.scroll-hint');
+
+    if (roadsContainer) {
+        roadsContainer.style.transformOrigin = 'bottom right';
+        roadsContainer.style.transition = 'transform 0.1s ease-out';
+    }
+
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                const scrollY = window.scrollY;
+                const viewportHeight = window.innerHeight;
+                const threshold = viewportHeight * 0.1;
+
+                let scale = 1 - (scrollY * 0.0001);
+
+                if (scrollY > threshold) {
+                    scale -= (scrollY - threshold) * 0.0005;
+                }
+
+                scale = Math.max(0.5, scale);
+
+                if (roadsContainer) {
+                    roadsContainer.style.transform = `scale(${scale})`;
+                }
+
+                ticking = false;
+            });
+            ticking = true;
+        }
+    });
 });
 
 document.addEventListener("DOMContentLoaded", () => {
